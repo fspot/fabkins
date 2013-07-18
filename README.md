@@ -22,11 +22,15 @@ Installation
 ------------
 
 You need a UNIX server with python >= 2.6 ; gevent and flask.
+```bash
 sudo apt-get install libevent-dev  # necessary for gevent
 sudo pip install flask gevent gevent-websocket
+```
 
 Configuration and launch
 ------------------------
 
+```bash
 vim settings.py
 python app.py
+```
