@@ -4,9 +4,6 @@
 ### IMPORTS : stdlib ; libs ; mycode ###
 ########################################
 
-import os
-
-from flask import Flask, render_template
 from gevent.server import StreamServer
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
@@ -25,9 +22,7 @@ sck = {}
 ### WSGI APP stuff ###
 ######################
 
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
-app.debug = True
+from flaskapp import app
 
 def my_app(environ, start_response):
     path = environ["PATH_INFO"]
@@ -42,25 +37,8 @@ def my_app(environ, start_response):
 ### COMMANDER stuff ###
 #######################
 
-kmd = Commander()
-kmd.start()
-
-
-### Flask views ###
-###################
-
-@app.route('/')
-def index():
-    """ Racine """
-    return "<pre>it works !</pre>"
-
-@app.route('/cmd/<path:cmd>')
-def launch_cmd(cmd):
-    return "<pre>{0} ==> {1}</pre>".format(cmd, repr(kmd.cmd(cmd, True)))
-
-@app.route('/ws')
-def websocket_page():
-    return render_template('index.html')
+app.kmd = Commander()
+app.kmd.start()
 
 
 ### MAIN ###
@@ -75,4 +53,4 @@ if __name__ == '__main__':
         tcp_server.serve_forever()
     except KeyboardInterrupt:
         pass
-    kmd.stop()
+    app.kmd.stop()
