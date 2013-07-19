@@ -5,15 +5,16 @@ import os
 
 from flask import Flask, render_template
 
+import settings
+
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
-app.debug = True
+app.secret_key = settings.SECRET_KEY
+app.debug = settings.DEBUG
 
 
 @app.route('/')
 def index():
-    """ Racine """
     return "<pre>it works !</pre>"
 
 @app.route('/cmd/<path:cmd>')

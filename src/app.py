@@ -8,6 +8,7 @@ from gevent.server import StreamServer
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
 
+import settings
 from commander import Commander
 from tcpsocket import LinesHandler
 from websocket import handle_websocket
@@ -45,12 +46,13 @@ app.kmd.start()
 ############
 
 if __name__ == '__main__':
-    http_server = WSGIServer(('', 8010), my_app, handler_class=WebSocketHandler)
+    http_server = WSGIServer(('', settings.WEB_PORT), my_app, handler_class=WebSocketHandler)
     http_server.start()
     lines_handler = LinesHandler(sck)
-    tcp_server = StreamServer(('', 8011), lines_handler.handle)
+    tcp_server = StreamServer(('', settings.TCP_PORT), lines_handler.handle)
     try:
         tcp_server.serve_forever()
     except KeyboardInterrupt:
         pass
     app.kmd.stop()
+

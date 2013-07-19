@@ -8,6 +8,8 @@ from multiprocessing import Process, Queue, current_process
 
 from gevent import socket
 
+import settings
+
 
 class Commander(object):
     def __init__(self):
@@ -36,16 +38,16 @@ class Commander(object):
 
 def sender(outputs):
     sk = socket.socket()
-    count = 5
+    count = settings.TCP_CLIENT_TIMEOUT
     while count > 0:
         try:
-            sk.connect(('localhost', 8011))
+            sk.connect(('localhost', settings.TCP_PORT))
             break
         except:
             time.sleep(0.1)
             count -= 1
     if count <= 0:
-        print "/!\ Could not connect to localhost:8011 /!\\"
+        print "/!\ Could not connect to tcp server /!\\"
         return
 
     print "<sender up!>"
