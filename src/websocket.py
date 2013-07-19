@@ -4,16 +4,43 @@
 import json
 
 
+def handle_start(ws, msg, sck):
+    ws.subscribe = msg['subscribe']
+    ws.state = 'subscribed'
+    sck[ws.label] = ws
+    # send begin build data here
+
+
+def handle_msg(ws, msg):
+    #ws.send(json.dumps({'output': r}))
+    pass
+
+
+def handle(ws, msg, sck):
+    # load msg, check type TODO
+    msg = json.loads(msg)
+    if ws.state == 'start':
+        handle_start(ws, msg, sck)
+    else:
+        handle_msg(ws, msg)
+
+
 def handle_websocket(ws, sck):
     ws.label = '{0}:{1}'.format(*ws.socket.getpeername())
-    sck[ws.label] = ws
+    ws.state = 'start'
     print "<WSS : BEGIN OF %s>" % ws.label
+    
     while True:
-        message = ws.receive()
-        if message is None:
-            break
+	try:
+            msg = ws.receive()
+        except:
+	    break
+        if msg is None:
+	    break
         else:
-            r  = "I have received : %s" % repr(message)
-            ws.send(json.dumps({'output': r}))
-    del sck[ws.label]
+            handle(ws, msg, sck)
+    
+    # client quit
+    if ws.label in sck:
+        del sck[ws.label]
     print "<WSS : END OF %s>" % ws.label

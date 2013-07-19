@@ -23,7 +23,7 @@
 
             // Bind send button to websocket
             $("button#send").live("click", function() {
-                ws.send(JSON.stringify({'output': 'Sent from my browser!'}));
+                ws.send(JSON.stringify({'subscribe': 'some_build_id'}));
             });
 
             // Cleanly close websocket when unload window
