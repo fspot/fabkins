@@ -2,31 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
 </head>
-<h1 style="font-family:arial;">Websockets with Flask & Gevent</h1>
-<pre><p id="log"></p></pre>
-<button id="send" type="button">Send!</button>
+
 <body>
+
+<h1 style="text-align: center; font-family: 'Press Start 2P';">Build output...</h1>
+
+<pre style="margin:auto; width:70%; color:#FFF; background-color:#333; padding:10px; border-radius:5px; box-shadow:0px 0px 15px #222; overflow:auto;">
+    <p id="log"></p>
+</pre>
+
     <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
     <script>
-        $(document).ready(function(){
-            if ("WebSocket" in window) {
-                ws = new WebSocket("ws://" + document.domain + ":8010/websocket");
-                var logspace = document.querySelector('#log');
-                ws.onmessage = function (msg) {
-                    var message = JSON.parse(msg.data);
-                    var newtext = document.createTextNode(message.output);
-                    logspace.appendChild(newtext);
-                    window.scrollTo(0, document.body.scrollHeight); // scroll down
-                };  
+        $(function(){
+            var build_id = window.location.hash.substring(1);
+            var ws = new WebSocket("ws://" + document.domain + ":8010/websocket");
+            window.ws = ws; // debugging purpose
+            var logspace = document.querySelector('#log');
+
+            ws.onopen = function() {
+                ws.send(JSON.stringify({'subscribe': build_id}));
             };
 
-            // Bind send button to websocket
-            $("button#send").live("click", function() {
-                ws.send(JSON.stringify({'subscribe': 'some_build_id'}));
-            });
+            ws.onmessage = function (msg) {
+                var msg = JSON.parse(msg.data);
+                if (msg.output.type === 'line') {
+                    var newtext = document.createTextNode(msg.output.line);
+                    logspace.appendChild(newtext);
+                    window.scrollTo(0, document.body.scrollHeight); // scroll down
+                } else if (msg.output.type === 'NO_PROCESS') {
+                    alert('No such process !');
+                }
+            };
 
-            // Cleanly close websocket when unload window
             window.onbeforeunload = function() {
                 ws.onclose = function () {}; // disable onclose handler first
                 ws.close()

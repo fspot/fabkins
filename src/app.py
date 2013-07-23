@@ -18,6 +18,7 @@ from websocket import handle_websocket
 #####################
 
 sck = {}
+lines_handler = LinesHandler(sck)
 
 
 ### WSGI APP stuff ###
@@ -25,12 +26,13 @@ sck = {}
 
 from flaskapp import app
 
+
 def my_app(environ, start_response):
     path = environ["PATH_INFO"]
     if path == "/":
         return app(environ, start_response)
     elif path == "/websocket":
-        handle_websocket(environ["wsgi.websocket"], sck)
+        handle_websocket(environ["wsgi.websocket"], lines_handler)
     else:
         return app(environ, start_response)
 
@@ -48,11 +50,9 @@ app.kmd.start()
 if __name__ == '__main__':
     http_server = WSGIServer(('', settings.WEB_PORT), my_app, handler_class=WebSocketHandler)
     http_server.start()
-    lines_handler = LinesHandler(sck)
     tcp_server = StreamServer(('', settings.TCP_PORT), lines_handler.handle)
     try:
         tcp_server.serve_forever()
     except KeyboardInterrupt:
         pass
     app.kmd.stop()
-
