@@ -40,6 +40,10 @@ class Build(object):
         })
         return copy
 
+    def save(self):
+        f = open(join(self.dir, 'build_info.json'), 'w')
+        f.write(json.dumps(self.to_dict(), indent=2))
+        f.close()
 
 class Process(object):
     def __init__(self):

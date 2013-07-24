@@ -9,18 +9,18 @@ def handle_start(ws, msg, lines_handler):
     ws.subscribe = msg['subscribe']
     info = services.info_process(ws.subscribe)
     if info is None:
-        ws.send(json.dumps({'output': {'type': 'NO_PROCESS'}}))
+        ws.send(json.dumps({'type': 'NO_PROCESS'}))
         raise Exception("NO_PROCESS")
     print 'WSS : subscription to', ws.subscribe
     ws.state = 'subscribed'
     lines_handler.sck[ws.label] = ws
     # send begin build data here
     for line in lines_handler.outputs[ws.subscribe]:
-        ws.send(json.dumps({'output': {
+        ws.send(json.dumps({
             'type': 'line',
             'pid': ws.subscribe,
             'line': line
-        }}))
+        }))
 
 
 def handle_msg(ws, msg):

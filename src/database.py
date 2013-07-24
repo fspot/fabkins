@@ -5,6 +5,7 @@ import os
 from os.path import join
 import json
 import datetime
+from time import time
 
 import settings
 from models import Job, Build
@@ -36,7 +37,12 @@ class Database(object):
         build_dir = join(settings.WORKDIR, 'jobs', job_label, 'builds', date)
         os.mkdir(build_dir)
         f = open(join(build_dir, 'build_info.json'), 'w')
-        f.write(json.dumps({"cmd": cmd}, indent=2))
+        build_infos = {
+            "cmd": cmd,
+            "label": date,
+            "start": time(),
+        }
+        f.write(json.dumps(build_infos, indent=2))
         f.close()
         b = Build(build_dir, "todo")
         j = self.get_job(job_label)
@@ -48,9 +54,13 @@ class Database(object):
         build.status = "doing"
         self.procs[pid] = build
 
-    def close_process(self, pid):
-        self.procs[pid].status = "done"
-        self.procs[pid].proc = None
+    def close_process(self, pid, *args):
+        build = self.procs[pid]
+        build.status = "done"
+        build.proc = None
+        build.json['end'] = time()
+        build.json['code'] = args[0].strip()
+        build.save()
         del self.procs[pid]
 
 db = Database()

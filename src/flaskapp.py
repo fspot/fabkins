@@ -20,7 +20,7 @@ def index():
 def launch_cmd(cmd):
     return "<pre>{0} ==> {1}</pre>".format(cmd, repr(app.kmd.cmd(cmd)))
 
-@app.route('/ws')
+@app.route('/watch')
 def websocket_page():
     return render_template('index.html')
 
@@ -49,7 +49,7 @@ def view_job(job_label):
 @app.route('/api/job/<job_label>/build/')
 def builds_of_job(job_label):
     builds = services.get_builds_of_job(job_label)
-    builds = [{b.label: b.json} for b in builds]
+    builds = [{bl: b.to_dict()} for bl, b in builds.iteritems()]
     return jsonify({'builds': builds})
 
 @app.route('/job/<job_label>/build/run/', methods=['POST'])
@@ -71,4 +71,5 @@ def build_job(job_label):
     #     "status": "doing"
     #   }
     # }
-    return redirect('/ws#%d' % pid)
+
+    return redirect('/watch#{0};{1};{2}'.format(pid, job_label, build.label))

@@ -15,7 +15,7 @@ class LinesHandler(object):
         for name, ws in self.sck.iteritems():
             if ws.subscribe == msg['pid']:
                 print "sending %s to %s" % (repr(msg), name)
-                ws.send(json.dumps({'output': msg}))
+                ws.send(json.dumps(msg))
 
     def handle(self, sock, address):
         print '<tcp client %s:%s>' % address
@@ -39,7 +39,7 @@ class LinesHandler(object):
                 if 'END' in first_part:
                     services.write_output(pid, self.outputs[pid])
                     del self.outputs[pid]
-                    services.close_process(pid)
+                    services.close_process(pid, line)
                 elif 'BEGIN' in first_part:
                     self.outputs[msg['pid']] = []
             else:

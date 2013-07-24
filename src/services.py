@@ -30,8 +30,8 @@ def add_process(pid, build):
 def info_process(pid):
     return db.procs.get(int(pid))
 
-def close_process(pid):
-    db.close_process(int(pid))
+def close_process(pid, *args):
+    db.close_process(int(pid), *args)
 
 def write_output(pid, lines):
     build = info_process(int(pid))
