@@ -28,6 +28,11 @@ def websocket_page():
 def prepare_build_job(job_label):
     return render_template('run_form.html', job_label=job_label)
 
+@app.route('/base')
+def base_tmpl():
+    return render_template('child.html')
+
+
 ### API ###
 ###########
 
