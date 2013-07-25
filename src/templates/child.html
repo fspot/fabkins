@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+  {% block navbar %}
+  <!-- Header and Nav -->
+  <nav class="top-bar">
+    <ul class="title-area">
+      <!-- Title Area -->
+      <li class="name">
+        <h1>
+          <a href="grid.html#">Fabkins</a>
+        </h1>
+      </li>
+      <li class="toggle-topbar menu-icon"><a href="grid.html#"><span>Menu</span></a></li>
+    </ul>
+
+    <section class="top-bar-section">
+      <!-- Left Nav Section -->
+      <ul class="left">
+        <li class="divider"></li>
+        <li class="has-dropdown">
+          <a class="active" href="grid.html#">Jobs</a>
+          <ul class="dropdown">
+            <li><label>Section Name</label></li>
+            <li><a href="grid.html#" class="">Dropdown Level 1</a></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><label>Section Name</label></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><a href="grid.html#">See all &rarr;</a></li>
+          </ul>
+        </li>
+        <li class="divider"></li>
+        <li class="has-dropdown">
+          <a href="grid.html#">Builds</a>
+          <ul class="dropdown">
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><a href="grid.html#">See all &rarr;</a></li>
+          </ul>
+        </li>
+        <li class="divider"></li>
+        <li><a href="grid.html#">Stats</a></li>
+       
+      </ul>
+
+      <!-- Right Nav Section -->
+      <ul class="right">
+        <li class="divider"></li>
+        <li class="has-dropdown">
+          <a href="grid.html#">Admin</a>
+          <ul class="dropdown">
+            <li><label>Section Name</label></li>
+            <li class="has-dropdown">
+              <a href="grid.html#" class="">Has Dropdown, Level 1</a>
+              <ul class="dropdown">
+                <li><a href="grid.html#">Dropdown Options</a></li>
+                <li><a href="grid.html#">Dropdown Options</a></li>
+                <li class="has-dropdown">
+                  <a href="grid.html#">Has Dropdown, Level 2</a>
+                  <ul class="dropdown test">
+                    <li><a href="grid.html#">Subdropdown Option</a></li>
+                    <li><a href="grid.html#">Subdropdown Option</a></li>
+                    <li><a href="grid.html#">Subdropdown Option</a></li>
+                  </ul>
+                </li>
+                <li><a href="grid.html#">Subdropdown Option</a></li>
+                <li><a href="grid.html#">Subdropdown Option</a></li>
+                <li><a href="grid.html#">Subdropdown Option</a></li>
+              </ul>
+            </li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><label>Section Name</label></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li><a href="grid.html#">Dropdown Option</a></li>
+            <li class="divider"></li>
+            <li><a href="grid.html#">See all &rarr;</a></li>
+          </ul>
+        </li>
+        <li class="divider"></li>
+        <li><a href="grid.html#">Logout</a></li>
+        <li class="divider"></li>
+      </ul>
+    </section>
+  </nav>
+  {% endblock %}
+
+
+  {% block main %}
+  <div class="row">
+
+    <div class="large-3 columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a three columns grid panel with an arbitrary height.</p>
+      </div>
+    </div>
+    <div class="large-6 columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a six columns grid panel with an arbitrary height. Bacon ipsum dolor sit amet salami ham hock biltong ball tip drumstick sirloin pancetta meatball short loin.</p>
+      </div>
+    </div>
+    <div class="large-3  columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a three columns grid panel with an arbitrary height.</p>
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <div class="row">
+
+    <div class="large-6 columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a six columns grid panel with an arbitrary height. Bacon ipsum dolor sit amet salami ham hock biltong ball tip drumstick sirloin pancetta meatball short loin.</p>
+      </div>
+    </div>
+    <div class="large-2 columns">
+      <div class="panel">
+        <p>
+          <img src="http://placehold.it/200x200" />
+        </p>
+      </div>
+    </div>
+    <div class="large-4 columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a four columns grid panel with an arbitrary height. Bacon ipsum dolor sit amet salami.</p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="row">
+
+    <div class="large-4 columns">
+      <div class="panel">
+        <p>
+          <img src="http://placehold.it/400x300" />
+        </p>
+      </div>
+    </div>
+    <div class="large-4 columns">
+      <div class="panel">
+        <p>
+          <img src="http://placehold.it/400x300" />
+        </p>
+      </div>
+    </div>
+    <div class="large-4 columns">
+      <div class="panel">
+        <p>
+          <img src="http://placehold.it/400x300" />
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="row">
+
+    <div class="large-6 columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a six columns grid panel with an arbitrary height. Bacon ipsum dolor sit amet salami ham hock biltong ball tip drumstick sirloin pancetta meatball short loin.</p>
+      </div>
+    </div>
+    <div class="large-3 columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a three columns grid panel with an arbitrary height.</p>
+      </div>
+    </div>
+    <div class="large-3 columns">
+      <div class="panel">
+        <h5>Panel Title</h5>
+        <p>This is a three columns grid panel with an arbitrary height.</p>
+      </div>
+    </div>
+
+  </div>
+  {% endblock %}
+
