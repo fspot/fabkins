@@ -5,7 +5,7 @@ import os
 import datetime
 from time import time
 
-from flask import Flask, render_template, jsonify, request, redirect
+from flask import Flask, render_template, jsonify, request, redirect, g
 
 import settings
 import services
@@ -135,3 +135,13 @@ def _jinja2_filter_duration(duration):
 @app.context_processor
 def passer_aux_templates():
     return dict(gettime=time)
+
+
+### Before request ###
+######################
+
+@app.before_request
+def before_request():
+    g.request_start_time = time()
+    g.request_time = lambda: "%.0f ms" % (1000.0*(time() - g.request_start_time))
+
