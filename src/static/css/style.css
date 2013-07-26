@@ -1,0 +1,16 @@
+pre#log {
+	margin: auto;
+	width: 80%;
+	color: #FFF;
+	background-color: #0B2D47;
+	padding: 10px;
+	box-shadow: 0px 0px 10px #888;
+	overflow: auto;
+}
+
+pre#log a {
+	color: #B1D8EA;
+	display: block;
+	text-align: center;
+	text-decoration: underline;
+}

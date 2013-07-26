@@ -33,6 +33,15 @@ def info_process(pid):
 def close_process(pid, *args):
     db.close_process(int(pid), *args)
 
+def process_of_build(job_label, build_label):
+    job = get_job(job_label)
+    build = job.builds[build_label]
+    return build.proc
+
+def processing_builds_of_job(job_label):
+    job = get_job(job_label)
+    return [b for b in job.builds.itervalues() if b.status == "doing"]
+
 def write_output(pid, lines):
     build = info_process(int(pid))
     build.write_output(lines)

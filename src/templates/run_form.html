@@ -1,22 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <link href='http://fonts.googleapis.com/css?family=Wellfleet' rel='stylesheet' type='text/css'>
-</head>
+{% extends "base.html" %}
 
-<body>
-
-<h1 style="text-align: center; font-family: 'Wellfleet';">Launch Job "{{ job_label }}"</h1>
-
-<div style="width:60%; margin:auto; text-align:center; background-color:#EEE; padding:20px; border-radius:10px; box-shadow:0px 0px 20px #BBB;">
-<form action="" method="post">
-<p>
-    <input type="text" name="args" placeholder="args for fab..." />
-    <input type="submit" value="run !" />
-</p>
-</form>
+{% block main %}
+{% include "navbar.html" %}
+<div class="row">
+<h1>{{ job.title }}</h1>
+<h5 class="subheader">{{ job.description }}</h5>
 </div>
 
-</body>
-</html>
+<div class="row">
+  <br>
+  <a href=""><i class="icon-question-sign"></i> Need some help ?</a>
+  <br><br>
+</div>
+
+<form action="" method="post">
+  <div class="row collapse">
+    <div class="small-3 large-2 columns">
+      <span class="prefix">$ fab</span>
+    </div>
+    <div class="small-9 large-10 columns">
+      <input type="text" name="args" placeholder="command line arguments...">
+    </div>
+  </div>
+  <div class="row">
+    <input type="submit" class="small button" value="> Launch !"><br>
+  </div>
+</form>
+
+{% endblock %}

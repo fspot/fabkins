@@ -16,21 +16,38 @@ class Database(object):
         self.refresh_jobs()
         self.procs = {}
 
+    def create_job(self, job_title, job_label, description, template=None):
+        job_dir = join(settings.WORKDIR, 'jobs', job_label)
+        os.mkdir(job_dir)
+        f = open(join(job_dir, 'config.json'), 'w')
+        job_infos = {
+            "title": job_title,
+            "label": job_label,
+            "description": description,
+            "created_at": time(),
+            "version": 1,
+        }
+        f.write(json.dumps(job_infos, indent=2))
+        f.close()
+        j = Job(job_dir, self)
+        return j
+
     def refresh_jobs(self):
         self.jobs_dir = join(settings.WORKDIR, 'jobs')
         labels = os.listdir(self.jobs_dir)
         self.jobs = {}
         for label in labels:
-            job_config = join(self.jobs_dir, label, "config.json")
-            job = json.loads(open(job_config).read())
-            self.jobs[label] = Job(job, self)
+            job_dir = join(self.jobs_dir, label)
+            self.jobs[label] = Job(job_dir, self)
 
     def get_job(self, label):
         return self.jobs[label]
 
-    def get_builds(self, job_label):
+    def get_builds(self, job_label, j=None):
+        if j is None:
+            j = self.get_job(job_label)
         builds_dir = join(settings.WORKDIR, 'jobs', job_label, 'builds')
-        return dict((d, Build(join(builds_dir, d))) for d in os.listdir(builds_dir))
+        return dict((d, Build(j, join(builds_dir, d))) for d in os.listdir(builds_dir))
 
     def create_build(self, job_label, cmd):
         date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -44,8 +61,8 @@ class Database(object):
         }
         f.write(json.dumps(build_infos, indent=2))
         f.close()
-        b = Build(build_dir, "todo")
         j = self.get_job(job_label)
+        b = Build(j, build_dir, "todo")
         j.builds[date] = b
         return b
 

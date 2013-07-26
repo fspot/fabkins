@@ -12,17 +12,18 @@
   <title>{% block title %}Fabkins{% endblock %}</title>
 
   <!-- Included CSS Files -->
+  {% block css %}
+  <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css" />
   <link href="{{ url_for('static', filename='css/normalize.css') }}" rel="stylesheet" type="text/css" />
   <link href="{{ url_for('static', filename='css/foundation.css') }}" rel="stylesheet" type="text/css" />
+  {% endblock %}
 
   <script src="{{ url_for('static', filename='js/custom.modernizr.js') }}"></script>
 {% endblock %}
 </head>
 <body>
 {% block body %}
-
-  {% block navbar %}
-  {% endblock %}
 
   {% block main %}
   {% endblock %}
@@ -33,14 +34,12 @@
       <hr />
       <div class="row">
         <div class="large-6 columns">
-          <p>&copy; Copyright no one at all. Go to town.</p>
+          <p><i class="icon-unlock"></i> MIT License. By <a href="">@fspot</a>.</p>
         </div>
         <div class="large-6 columns">
           <ul class="inline-list right">
-            <li><a href="#">Section 1</a></li>
-            <li><a href="#">Section 2</a></li>
-            <li><a href="#">Section 3</a></li>
-            <li><a href="#">Section 4</a></li>
+            <li><a href="#"><i class="icon-home"></i> Fabkins website</a></li>
+            <li><a href="#"><i class="icon-github"></i> Github repo</a></li>
           </ul>
         </div>
       </div>
@@ -49,7 +48,6 @@
   {% endblock %}
 
   {% block scripts %}
-  <script>
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/foundation.min.js') }}"></script>
   <script>

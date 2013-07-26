@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% include "navbar.html" %}
+<div class="row">
+<h1>{{ job.title }}</h1>
+<h5 class="subheader">{{ job.description }}</h5>
+<a href="{{ url_for('prepare_build_job', job_label=job.label) }}" class="small button">
+<i class="icon-spinner"></i> Launch a build</a>
+<a href="#" class="small button secondary"><i class="icon-edit"></i> Edit this job</a>
+
+{% if doing is not none %}
+<h4>#{{ doing | length }} build{% if doing|length > 1 %}s{% endif %} running</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Build</th>
+      <th>command line</th>
+      <th>started at</th>
+      <th>duration</th>
+      <th>status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for build in doing|sort(attribute='start', reverse=True) %}
+      <tr>
+        <td><a href="#">{{ build.label }}</a></td>
+        <td><code>{{ build.cmd }}</code></td>
+        <td>{{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</td>
+        <td>{{ (gettime() - build.start) | duration }}</td>
+        <td><a href="{{ url_for('watch_build', job_label=job.label, build_label=build.label) }}"><i class="icon-spinner"></i></a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if done is not none %}
+<h4>#{{ done | length }} build{% if done|length > 1 %}s{% endif %} finished</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Build</th>
+      <th>command line</th>
+      <th>started at</th>
+      <th>duration</th>
+      <th>status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for build in done|sort(attribute='start', reverse=True) %}
+      <tr>
+        <td><a href="#">{{ build.label }}</a></td>
+        <td><code>{{ build.cmd }}</code></td>
+        <td>{{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</td>
+        <td>{{ (build.end - build.start) | duration }}</td>
+        <td>
+          {% if build.code == '0' %}
+            <i class="icon-thumbs-up-alt"></i>
+          {% else %}
+            <i class="icon-thumbs-down"></i>
+          {% endif %}
+          ({{ build.code }})
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if doing is none and done is none %}
+<p>No build history yet :(</p>
+{% endif %}
+
+</div>
+{% endblock %}

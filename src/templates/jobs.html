@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% include "navbar.html" %}
+<div class="row">
+<h1>Job list</h1>
+<a href="#" class="small button">New job</a>
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">Job</th>
+      <th>description</th>
+      <th width="180">created at</th>
+      <th width="50">version</th>
+      <th width="50">builds</th>
+      <th width="50">run</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for job in jobs %}
+      <tr>
+        <td><a href="{{ url_for('view_job', job_label=job.label) }}">{{ job.title }}</a></td>
+        <td>{{ job.description }}</td>
+        <td>{{ job.created_at | strftime("%d %b %Y, %Hh") }}</td>
+        <td>{{ job.version }}</td>
+        <td>
+          <a href="#" data-dropdown="drop{{ job.label }}">{{ job.builds | length }}
+          <i class="icon-caret-down"></i></a>
+          <ul id="drop{{ job.label }}" class="f-dropdown" data-dropdown-content>
+            <li><a href="{% if job.builds.values() | filtattrval("status", "doing") | length == 1 %}{{ url_for('watch_build', job_label=job.label) }}{% else %}{{ url_for('view_job', job_label=job.label) }}{% endif %}"><i class="icon-spinner"></i> {{ job.builds.values() | filtattrval("status", "doing") | length }} running</a></li>
+            <li><a href="{{ url_for('view_job', job_label=job.label) }}"><i class="icon-thumbs-up-alt"></i> {{ job.builds.values() | filtattrval("code", "0") | length }} success</a></li>
+            <li><a href="{{ url_for('view_job', job_label=job.label) }}"><i class="icon-thumbs-down"></i> {{ job.builds.values() | filtattrval("code", "0", True) | length }} failed</a></li>
+            <li><a href="#">---</a></li>
+            <li><a href="{{ url_for('view_job', job_label=job.label) }}">See all &rarr;</a></li>
+          </ul>
+        </td>
+        <td><a href="{{ url_for('prepare_build_job', job_label=job.label) }}"><i class="icon-play-circle"></i></a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+{% endblock %}

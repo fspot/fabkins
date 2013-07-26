@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+{% include "navbar.html" %}
+{% if job is not none and job is not undefined and build is not none %}
+<div class="row">
+    <h2>Build processing...</h2>
+    <ul>
+        <li><b>Job</b> : <a href="{{ url_for('view_job', job_label=job.label) }}">{{ job.title }}</a></li>
+        <li><b>Build</b> : started at {{ build.start | strftime("%d %b %Y, %H:%M:%S") }} ({{ (gettime() - build.start) | duration }} ago)</li>
+    </ul>
+</div>
+{% endif %}
+<pre id="log"></pre>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $(function(){
+        var lineno = 0;
+        var hashstring = window.location.hash.substring(1).split(';');
+        console.log(hashstring);
+        var build_pid = hashstring[0],
+            job_label = hashstring[1],
+            build_label = hashstring[2];
+        var ws = new WebSocket("ws://" + document.domain + ":8010/websocket");
+        window.ws = ws; // debugging purpose
+        var logspace = document.querySelector('#log');
+
+        ws.onopen = function() {
+            ws.send(JSON.stringify({'subscribe': build_pid}));
+        };
+
+        ws.onmessage = function (msg) {
+            var msg = JSON.parse(msg.data);
+            if (msg.type === 'line') {
+                // it's a line of the output
+                lineno++;
+                var num = lineno.toString();
+                var numl = num.length;
+                for (var i=0 ; i<6-numl; i++)
+                    num = ' ' + num;
+                var newtext = document.createTextNode('[' + num + ']  ' + msg.line);
+                logspace.appendChild(newtext);
+                window.scrollTo(0, document.body.scrollHeight); // scroll down
+            } else if (msg.type === '<FABKINS_END>') {
+                var end_link = document.createElement('a');
+                end_link.href = '/job/' + job_label + '/';
+                end_link.innerText = 'Build finished ! Go back to the job';
+                logspace.appendChild(end_link);
+            } else if (msg.type === 'NO_PROCESS') {
+                // oops, this build doesn't exist (any more)
+                logspace.innerHTML = '<a href="/job/' + job_label + '/"><i class="icon-info-sign"></i> Woops, build already finished ! Go back to the job</a>';
+            }
+        };
+
+        window.onbeforeunload = function() {
+            ws.onclose = function () {}; // disable onclose handler first
+            ws.close()
+        };
+    });
+</script>
+{% endblock %}
