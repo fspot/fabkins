@@ -1,12 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import time
-from multiprocessing import Process, Queue, current_process
-
-from gevent import socket
-
-import settings
+from multiprocessing import Process, Queue
 
 
 class Commander(object):
@@ -34,6 +29,18 @@ class Commander(object):
 
 
 def sender(outputs):
+    import time
+    import logging
+    from gevent import socket
+    import settings
+
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s %(levelname)s - %(message)s",
+        datefmt='%d/%m/%Y %H:%M:%S',
+        filename="sender.log"
+    )
+
     sk = socket.socket()
     count = settings.TCP_CLIENT_TIMEOUT
     while count > 0:
@@ -44,26 +51,37 @@ def sender(outputs):
             time.sleep(0.1)
             count -= 1
     if count <= 0:
-        print "/!\ Could not connect to tcp server /!\\"
+        logging.warn("/!\ Could not connect to tcp server /!\\")
         return
 
-    print "<sender up!>"
+    logging.info("<sender up!>")
     while True:
         out = outputs.get()
         line = ' '.join(out)
         print "::: to ze internets :", line.rstrip("\n")
         sk.sendall(line.rstrip("\n") + '\n')
-    print "<sender down!>"
+    logging.info("<sender down!>")
 
 
 def master(queue, rep_queue, outputs):
-    print "<master up!>"
+    from multiprocessing import Process
+    import logging
+
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(levelname)s - %(message)s',
+        datefmt='%d/%m/%Y %H:%M:%S',
+        filename="master.log"
+    )
+    
+    logging.info("<master up!>")
     workers = []
     while True:
         try:
             (cmd,) = queue.get()
         except:
             break
+        logging.debug("master rcv cmd : %s" % cmd)
         workers = [w for w in workers if w.is_alive()]  # gc ?
         if cmd == "l":
             rep = [(w.pid, w.cmd) for w in workers]
@@ -74,17 +92,19 @@ def master(queue, rep_queue, outputs):
             workers.append(w)
             rep = w.pid
         rep_queue.put(rep)
-    print "<master down!>"
+    logging.info("<master down!>")
 
 
 def run_command(cmd, outputs=None):
+    from multiprocessing import current_process
     import subprocess
     import shlex
+    import logging
 
     if cmd.strip() == '':
-        print "<WORKER: CMD VOID>"
+        logging.info("<WORKER: CMD VOID>")
         return
-    print "<WORKER: CMD %s START>" % cmd
+    logging.info("<WORKER: CMD %s START>" % cmd)
     try:
         splitted = shlex.split(cmd)
         proc = subprocess.Popen(
@@ -93,7 +113,7 @@ def run_command(cmd, outputs=None):
             stderr=subprocess.PIPE
         )
     except OSError:
-        print "<WORKER: CMD %s WRONG>"
+        logging.info("<WORKER: CMD %s WRONG>" % repr(splitted))
         return
 
     outputs.put(['<FABKINS_BEGIN>', str(current_process().pid), cmd])
@@ -111,5 +131,6 @@ def run_command(cmd, outputs=None):
 
     outputs.put(['<FABKINS_END>', str(current_process().pid), str(proc.poll())])
 
-    print "<WORKER: CMD %s END !>" % cmd
+    logging.info("<WORKER: CMD %s END !>" % cmd)
     return proc.poll()
+
