@@ -3,20 +3,26 @@
 {% block main %}
 {% include "navbar.html" %}
 <div class="row">
+<div class="row">
+<ul class="breadcrumbs">
+  <li><a href="{{ url_for('index') }}">JOBS</a></li>
+  <li class="current"><a href="#">{{ job.label }}</a></li>
+</ul>
+
 <h1>{{ job.title }}</h1>
 <h5 class="subheader">{{ job.description }}</h5>
 <a href="{{ url_for('prepare_build_job', job_label=job.label) }}" class="small button">
 <i class="icon-spinner"></i> Launch a build</a>
-<a href="#" class="small button secondary"><i class="icon-edit"></i> Edit this job</a>
+<a href="{{ url_for('edit_job', job_label=job.label) }}" class="small button secondary"><i class="icon-edit"></i> Edit this job</a>
 
 {% if doing is not none %}
 <h4>#{{ doing | length }} build{% if doing|length > 1 %}s{% endif %} running</h4>
 <table>
   <thead>
     <tr>
-      <th>Build</th>
+      <th width="180">Build</th>
       <th>command line</th>
-      <th>started at</th>
+      <th width="200">started at</th>
       <th>duration</th>
       <th>status</th>
     </tr>
@@ -24,8 +30,9 @@
   <tbody>
     {% for build in doing|sort(attribute='start', reverse=True) %}
       <tr>
-        <td><a href="#">{{ build.label }}</a></td>
-        <td><code>{{ build.cmd }}</code></td>
+        <td><a href="{{ url_for('view_build', job_label=job.label, build_label=build.label) }}">
+        {{ build.label }}</a></td>
+        <td><pre class="altcode">{{ build.cmd }}</pre></td>
         <td>{{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</td>
         <td>{{ (gettime() - build.start) | duration }}</td>
         <td><a href="{{ url_for('watch_build', job_label=job.label, build_label=build.label) }}"><i class="icon-spinner"></i></a></td>
@@ -40,9 +47,9 @@
 <table>
   <thead>
     <tr>
-      <th>Build</th>
+      <th width="180">Build</th>
       <th>command line</th>
-      <th>started at</th>
+      <th width="200">started at</th>
       <th>duration</th>
       <th>status</th>
     </tr>
@@ -50,16 +57,13 @@
   <tbody>
     {% for build in done|sort(attribute='start', reverse=True) %}
       <tr>
-        <td><a href="#">{{ build.label }}</a></td>
-        <td><code>{{ build.cmd }}</code></td>
+        <td><a href="{{ url_for('view_build', job_label=job.label, build_label=build.label) }}">
+        {{ build.label }}</a></td>
+        <td><pre class="altcode">{{ build.cmd }}</pre></td>
         <td>{{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</td>
         <td>{{ (build.end - build.start) | duration }}</td>
         <td>
-          {% if build.code == '0' %}
-            <i class="icon-thumbs-up-alt"></i>
-          {% else %}
-            <i class="icon-thumbs-down"></i>
-          {% endif %}
+          <i class="icon-thumbs-{{ 'up-alt' if build.code == '0' else 'down' }}"></i>
           ({{ build.code }})
         </td>
       </tr>

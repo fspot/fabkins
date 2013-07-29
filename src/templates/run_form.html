@@ -3,6 +3,12 @@
 {% block main %}
 {% include "navbar.html" %}
 <div class="row">
+<ul class="breadcrumbs">
+  <li><a href="{{ url_for('index') }}">JOBS</a></li>
+  <li><a href="{{ url_for('view_job', job_label=job.label) }}">{{ job.label }}</a></li>
+  <li class="current"><a href="#">LAUNCH</a></li>
+</ul>
+
 <h1>{{ job.title }}</h1>
 <h5 class="subheader">{{ job.description }}</h5>
 </div>

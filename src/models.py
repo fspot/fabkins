@@ -12,6 +12,14 @@ class Job(object):
         self.reload()
         self.builds = self.db.get_builds(self.label, self)
 
+    def fabfile(self):
+        return open(join(self.dir, 'fabfile.py')).readlines()
+
+    def write_fabfile(self, lines):
+        f = open(join(self.dir, 'fabfile.py'), 'w')
+        f.writelines(lines)
+        f.close()
+
     def create_build(self, cmd):
         return self.db.create_build(self.label, cmd)
 

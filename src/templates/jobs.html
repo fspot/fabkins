@@ -3,8 +3,12 @@
 {% block main %}
 {% include "navbar.html" %}
 <div class="row">
+<ul class="breadcrumbs">
+  <li class="current"><a href="#">JOBS</a></li>
+</ul>
+
 <h1>Job list</h1>
-<a href="#" class="small button">New job</a>
+<a href="{{ url_for('new_job') }}" class="small button">New job</a>
 
 <table>
   <thead>
@@ -18,7 +22,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for job in jobs %}
+    {% for job in jobs|sort(attribute='created_at', reverse=True) %}
       <tr>
         <td><a href="{{ url_for('view_job', job_label=job.label) }}">{{ job.title }}</a></td>
         <td>{{ job.description }}</td>

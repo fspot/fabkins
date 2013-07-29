@@ -18,11 +18,24 @@ def get_builds_of_job(job_label):
     job = get_job(job_label)
     return job.builds
 
+def get_build_of_job(job_label, build_label):
+    return get_builds_of_job(job_label)[build_label]
+
 def get_fabfile_path(job_label):
     return join(settings.WORKDIR, 'jobs', job_label, 'fabfile.py')
 
 def create_build(job_label, cmd):
     return db.create_build(job_label, cmd)
+
+def create_job(job_label, title, description, fabfile):
+    job = db.create_job(job_label, title, description)
+    job.write_fabfile(fabfile.split('\n'))
+    return job
+
+def edit_job(job_label, fabfile):
+    job = get_job(job_label)
+    job.write_fabfile(fabfile.split('\n'))
+    return job
 
 def add_process(pid, build):
     db.add_process(int(pid), build)
@@ -45,3 +58,7 @@ def processing_builds_of_job(job_label):
 def write_output(pid, lines):
     build = info_process(int(pid))
     build.write_output(lines)
+
+def labelify(title):
+    # TODO : handle special characters
+    return title.replace(' ', '_').lower()

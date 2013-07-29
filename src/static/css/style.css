@@ -1,6 +1,32 @@
+pre.code {
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	font-size: 0.8em;
+	color: #1E1C27;
+	background-color: #F7F0C6;
+	padding: 10px;
+	overflow: auto;
+	border-left: #0B2D47 solid 3px;
+}
+
+pre.altcode {
+	margin: auto;
+	font-size: 0.8em;
+	color: #1E1C27;
+	background-color: #DEE7EA;
+	padding: 5px;
+	overflow: auto;
+	padding: 5px;
+	min-height: 20px;
+	max-height: 35px;
+}
+
 pre#log {
 	margin: auto;
-	width: 80%;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	font-size: 0.8em;
 	color: #FFF;
 	background-color: #0B2D47;
 	padding: 10px;
@@ -14,3 +40,15 @@ pre#log a {
 	text-align: center;
 	text-decoration: underline;
 }
+
+#editor {
+	font-size: 16px;
+	width: 100% !important;
+	min-height: 100px;
+	max-height: 1000px;
+}
+
+
+.green {color: #98CC3D;}
+.red {color: #B63024;}
+.moreright {padding-left: 30px;}

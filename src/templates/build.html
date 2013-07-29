@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% include "navbar.html" %}
+<div class="row">
+<ul class="breadcrumbs">
+  <li><a href="{{ url_for('index') }}">JOBS</a></li>
+  <li><a href="{{ url_for('view_job', job_label=job.label) }}">{{ job.label }}</a></li>
+  <li class="current"><a href="#">{{ build.label }}</a></li>
+</ul>
+
+<h2>Build started at : {{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</h2>
+{% if build.status == "done" %}
+  <h5 class="subheader {{ 'green' if success else 'red' }}">
+  <i class="icon-thumbs-{{ 'up-alt' if success else 'down' }}"></i>
+  Finished. Build {% if not success %}un{% endif %}successful (return code : {{ build.code }})
+  </h5>
+  <br>
+  <h6>Build info</h6>
+  <ul class="moreright">
+    <li>Duration : {{ (build.end - build.start) | duration }}</li>
+    <li>Command used :
+      <pre class="code">{{ build.cmd }}</pre>
+    </li>
+  </ul>
+  <h6>Output</h6>
+  <pre id="log">{{ output }}</pre>
+{% else %}
+  <h5 class="subheader">Not finished yet (started {{ (gettime() - build.start) | duration }} ago).</h5>
+  <br>
+  <h6>Build info</h6>
+  <ul class="moreright">
+    <li>Command used :
+      <pre class="code">{{ build.cmd }}</pre>
+    </li>
+  </ul>
+  <p>
+  <a href="{{ url_for('watch_build', job_label=job.label, build_label=build.label) }}" class="small button">
+  <i class="icon-spinner"></i> Watch the output</a>
+  </p>
+{% endif %}
+</div>
+{% endblock %}

@@ -16,9 +16,10 @@ class Database(object):
         self.refresh_jobs()
         self.procs = {}
 
-    def create_job(self, job_title, job_label, description, template=None):
+    def create_job(self, job_label, job_title, description, template=None):
         job_dir = join(settings.WORKDIR, 'jobs', job_label)
         os.mkdir(job_dir)
+        os.mkdir(join(job_dir, 'builds'))
         f = open(join(job_dir, 'config.json'), 'w')
         job_infos = {
             "title": job_title,
@@ -30,6 +31,7 @@ class Database(object):
         f.write(json.dumps(job_infos, indent=2))
         f.close()
         j = Job(job_dir, self)
+        self.jobs[j.label] = j
         return j
 
     def refresh_jobs(self):

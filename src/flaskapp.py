@@ -5,7 +5,7 @@ import os
 import datetime
 from time import time
 
-from flask import Flask, render_template, jsonify, request, redirect, g
+from flask import Flask, render_template, jsonify, request, redirect, url_for, g
 
 import settings
 import services
@@ -28,9 +28,68 @@ def view_job(job_label):
     done = [b for b in job.builds.itervalues() if b.status == "done"] or None
     return render_template('job.html', job=job, doing=doing, done=done)
 
-@app.route(PRE+'/cmd/<path:cmd>')
-def launch_cmd(cmd):
-    return "<pre>{0} ==> {1}</pre>".format(cmd, repr(app.kmd.cmd(cmd)))
+@app.route(PRE+'/job/<job_label>/build/<build_label>/')
+def view_build(job_label, build_label):
+    job = services.get_job(job_label)
+    build = services.get_build_of_job(job_label, build_label)
+    success = (build.status == "done" and build.code == "0")
+    if build.status == "done":
+        output = ''.join(build.output())
+    return render_template('build.html', **locals())
+
+# new/edit job
+
+@app.route(PRE+'/job/new/')
+def new_job():
+    return render_template('new_job.html', fabfile=settings.DEFAULT_FABFILE, edit=False)
+
+@app.route(PRE+'/job/new/', methods=['POST'])
+def new_job_post():
+    title = request.form.get('title')
+    description = request.form.get('description')
+    fabfile = request.form.get('fabfile')
+    if title is None or description is None or fabfile is None:
+        return render_template('new_job.html', fabfile=settings.DEFAULT_FABFILE)
+    label = services.labelify(title)
+    job = services.create_job(label, title, description, fabfile)
+    return redirect(url_for('view_job', job_label=job.label))
+
+@app.route(PRE+'/job/<job_label>/edit/')
+def edit_job(job_label):
+    job = services.get_job(job_label)
+    fabfile = ''.join(job.fabfile())
+    return render_template('new_job.html', fabfile=fabfile, edit=True, job=job)
+
+@app.route(PRE+'/job/<job_label>/edit/', methods=['POST'])
+def edit_job_post(job_label):
+    job = services.get_job(job_label)
+    fabfile = request.form.get('fabfile')
+    if fabfile is None:
+        fabfile = ''.join(job.fabfile())
+        return render_template('new_job.html', fabfile=fabfile, edit=True, job=job)
+    services.edit_job(job_label, fabfile)
+    return redirect(url_for('view_job', job_label=job.label))
+
+# launch
+
+@app.route(PRE+'/job/<job_label>/build/launch/')
+def prepare_build_job(job_label):
+    job = services.get_job(job_label)
+    return render_template('run_form.html', job=job)
+
+@app.route(PRE+'/job/<job_label>/build/launch/', methods=['POST'])
+def build_job(job_label):
+    fabfile = services.get_fabfile_path(job_label)
+    cmd = "fab -f {0} {1}".format(
+        fabfile,
+        request.form["args"].replace(',', '\,')
+    )
+    build = services.create_build(job_label, cmd)
+    pid = app.kmd.cmd(cmd)
+    services.add_process(pid, build)
+    return redirect(PRE+'/watch/{1}/{2}/{0}/#{0};{1};{2}'.format(pid, job_label, build.label))
+
+# watch
 
 @app.route(PRE+'/watch')
 @app.route(PRE+'/watch/<job_label>/<build_label>/<pid>/')
@@ -39,11 +98,6 @@ def websocket_page(job_label=None, build_label=None, pid=None):
         job = services.get_job(job_label)
         build = job.builds[build_label]
     return render_template('watch.html', **locals())
-
-@app.route(PRE+'/job/<job_label>/build/launch/')
-def prepare_build_job(job_label):
-    job = services.get_job(job_label)
-    return render_template('run_form.html', job=job)
 
 @app.route(PRE+'/job/<job_label>/build/<build_label>/watch/<pid>')
 @app.route(PRE+'/job/<job_label>/build/<build_label>/watch/')
@@ -61,17 +115,6 @@ def watch_build(job_label, build_label=None, pid=None):
             build_label = builds[0].label
     return redirect(PRE+'/watch/{1}/{2}/{0}/#{0};{1};{2}'.format(pid, job_label, build_label))
 
-@app.route(PRE+'/job/<job_label>/build/launch/', methods=['POST'])
-def build_job(job_label):
-    fabfile = services.get_fabfile_path(job_label)
-    cmd = "fab -f {0} {1}".format(
-        fabfile,
-        request.form["args"].replace(',', '\,')
-    )
-    build = services.create_build(job_label, cmd)
-    pid = app.kmd.cmd(cmd)
-    services.add_process(pid, build)
-    return redirect(PRE+'/watch/{1}/{2}/{0}/#{0};{1};{2}'.format(pid, job_label, build.label))
 
 
 ### API ###

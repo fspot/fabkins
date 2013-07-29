@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% include "navbar.html" %}
+<div class="row">
+<ul class="breadcrumbs">
+  <li><a href="{{ url_for('index') }}">JOBS</a></li>
+  {% if edit %}
+  <li><a href="{{ url_for('view_job', job_label=job.label) }}">{{ job.label }}</a></li>
+  <li class="current"><a href="#">EDIT</a></li>
+  {% else %}
+  <li class="current"><a href="#">NEW JOB</a></li>
+  {% endif %}
+</ul>
+
+{% if edit %}
+  <h1>{{ job.title }}</h1>
+  <h5 class="subheader">{{ job.description }}</h5>
+{% else %}
+  <h1>New job</h1>
+  <h5 class="subheader">Creation form.</h5>
+{% endif %}
+<br>
+
+<form id="newjob-form"
+      action="{{ url_for('edit_job', job_label=job.label) if edit else '' }}"
+      method="post">
+  {% if not edit %}
+  <div class="row collapse">
+    <div class="small-3 large-2 columns">
+      <span class="prefix">Title</span>
+    </div>
+    <div class="small-9 large-10 columns">
+      <input type="text"
+             name="title"
+             {{ 'disabled' if edit else '' }}
+             placeholder="A short title for this job. Ex: 'Cthulhu Project'">
+    </div>
+  </div>
+
+  <div class="row collapse">
+    <div class="small-3 large-2 columns">
+      <span class="prefix">Description</span>
+    </div>
+    <div class="small-9 large-10 columns">
+      <input type="text"
+             name="description"
+             {{ 'disabled' if edit else '' }}
+             placeholder="Clear and concise, please. Ex : 'job for building and deploying the amazing Cthulhu software'">
+    </div>
+  </div>
+  {% endif %}
+
+  <h6>Fabfile</h6>
+  <pre name="fabfile" id="editor">{{ fabfile }}</pre>
+  <textarea name="fabfile" id="fabfile" style="display:none;"></textarea>
+
+  <br>
+  <input class="button" type="button" id="btn-create" value="{{'Save' if edit else 'Create !'}}" />
+  {% if edit %}
+  <a href="{{ url_for('view_job', job_label=job.label) }}" class="button secondary">Cancel</a>
+  {% endif %}
+</form>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/ace/ace.js') }}" type="text/javascript" charset="utf-8">
+  </script>
+  <script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/solarized_dark");
+    editor.getSession().setMode("ace/mode/python");
+
+    $(document).ready(function(){
+        var heightUpdateFunction = function() {
+            var newHeight =
+                      editor.getSession().getScreenLength()
+                      * editor.renderer.lineHeight
+                      + editor.renderer.scrollBar.getWidth();
+
+            $('#editor').height(newHeight.toString() + "px");
+            $('#editor-section').height(newHeight.toString() + "px");
+
+            // This call is required for the editor to fix all of
+            // its inner structure for adapting to a change in size
+            editor.resize();
+        };
+        // Set initial size to match initial content
+        heightUpdateFunction();
+        // Whenever a change happens inside the ACE editor, update
+        // the size again
+        editor.getSession().on('change', heightUpdateFunction);
+
+        $('#btn-create').on('click', function() {
+            $('#fabfile').val(editor.getValue());
+            $('#newjob-form').submit();
+        });
+    });
+  </script>
+{% endblock %}
