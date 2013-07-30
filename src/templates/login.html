@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<div class="row">
+
+<h2>Access restricted</h2>
+  <h5 class="subheader">What is your quest ?</h5>
+  <form action="" method="post">
+    <div class="row collapse">
+      <div class="small-3 large-2 columns">
+        <span class="prefix">Password</span>
+      </div>
+      <div class="small-9 large-10 columns">
+        <input type="password"
+               name="pw"
+               placeholder="not 'admin'">
+      </div>
+    </div>
+    <input type="submit" class="small button" value="Log in">
+  </form>
+</div>
+{% endblock %}

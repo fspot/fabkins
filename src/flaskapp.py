@@ -3,11 +3,14 @@
 
 import os
 import datetime
+import hashlib
 from time import time
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for, g, flash
+from flask import (Flask, render_template, jsonify,
+    request, redirect, url_for, g, flash, session)
 
-from decorators import need_correct_job_label, need_correct_job_and_build_label
+from decorators import (need_correct_job_label,
+    need_correct_job_and_build_label, need_root)
 import settings
 import services
 
@@ -16,14 +19,31 @@ app = Flask(__name__, static_url_path=PRE+'/static')
 app.secret_key = settings.SECRET_KEY
 app.debug = settings.DEBUG
 
+# login
+
+@app.route(PRE+'/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        session['pw'] = hashlib.sha256(request.form['pw']).digest()
+        return redirect(url_for('index'))
+    return render_template('login.html')
+
+@app.route(PRE+'/logout')
+def logout():
+    session.pop('pw', None)
+    return redirect(url_for('login'))
+
+# views
 
 @app.route(PRE+'/')
+@need_root
 def index():
     jobs = services.get_all_jobs().values()
     return render_template('jobs.html', jobs=jobs)
 
 @app.route(PRE+'/job/<job_label>/')
 @need_correct_job_label
+@need_root
 def view_job(job_label):
     try:
         job = services.get_job(job_label)
@@ -36,6 +56,7 @@ def view_job(job_label):
 
 @app.route(PRE+'/job/<job_label>/', methods=['POST'])
 @need_correct_job_label
+@need_root
 def delete_builds(job_label):
     builds = request.form.get("builds")
     if builds is not None:
@@ -52,6 +73,7 @@ def delete_builds(job_label):
 
 @app.route(PRE+'/job/<job_label>/build/<build_label>/')
 @need_correct_job_and_build_label
+@need_root
 def view_build(job_label, build_label):
     job = services.get_job(job_label)
     build = services.get_build_of_job(job_label, build_label)
@@ -63,10 +85,12 @@ def view_build(job_label, build_label):
 # new/edit job
 
 @app.route(PRE+'/job/new/')
+@need_root
 def new_job():
     return render_template('new_job.html', fabfile=settings.DEFAULT_FABFILE, edit=False)
 
 @app.route(PRE+'/job/new/', methods=['POST'])
+@need_root
 def new_job_post():
     title = request.form.get('title')
     description = request.form.get('description')
@@ -85,6 +109,7 @@ def new_job_post():
     return render_template('new_job.html', fabfile=fabfile)
 
 @app.route(PRE+'/job/<job_label>/edit/')
+@need_root
 @need_correct_job_label
 def edit_job(job_label):
     job = services.get_job(job_label)
@@ -92,6 +117,7 @@ def edit_job(job_label):
     return render_template('new_job.html', fabfile=fabfile, edit=True, job=job)
 
 @app.route(PRE+'/job/<job_label>/edit/', methods=['POST'])
+@need_root
 @need_correct_job_label
 def edit_job_post(job_label):
     job = services.get_job(job_label)
@@ -106,12 +132,14 @@ def edit_job_post(job_label):
 # launch
 
 @app.route(PRE+'/job/<job_label>/build/launch/')
+@need_root
 @need_correct_job_label
 def prepare_build_job(job_label):
     job = services.get_job(job_label)
     return render_template('run_form.html', job=job)
 
 @app.route(PRE+'/job/<job_label>/build/launch/', methods=['POST'])
+@need_root
 @need_correct_job_label
 def build_job(job_label):
     fabfile = services.get_fabfile_path(job_label)
@@ -130,6 +158,7 @@ def build_job(job_label):
 @app.route(PRE+'/job/<job_label>/build/<build_label>/watch/')
 @app.route(PRE+'/job/<job_label>/watch/')
 @need_correct_job_label
+@need_root
 def watch_build(job_label, build_label=None, pid=None):
     if pid is None and build_label is not None:
         pid = services.process_of_build(job_label, build_label) or '0'

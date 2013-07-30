@@ -7,6 +7,7 @@ import os
 WEB_PORT = 8010
 WORKDIR = "/home/fred/fabkinsdir"
 PREFIX = "/fabkins"
+PASSWORD = '\x07\x12>\x1fH#V\xc4\x15\xf6\x84@z;\x87#\xe1\x0b,\xbb\xc0\xb8\xfc\xd6(,I\xd3|\x9c\x1a\xbc'
 
 TCP_PORT = 8011
 SECRET_KEY = os.urandom(24)

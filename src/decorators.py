@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from flask import redirect, url_for, flash
+from flask import redirect, url_for, flash, session
 from functools import wraps
 
 import services
+import settings
 
 
 def need_correct_job_label(vue):
@@ -39,4 +40,12 @@ def need_correct_job_and_build_label(vue):
                 return redirect(url_for('view_job', job_label=job_label))
             else:
                 return vue(*args, **kwargs)
+    return decorated
+
+def need_root(vue):
+    @wraps(vue)
+    def decorated(*args, **kwargs):
+        if session.get('pw') != settings.PASSWORD:
+            return redirect(url_for('login'))
+        return vue(*args, **kwargs)
     return decorated
