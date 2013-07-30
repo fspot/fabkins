@@ -87,17 +87,9 @@ def build_job(job_label):
     build = services.create_build(job_label, cmd)
     pid = app.kmd.cmd(cmd)
     services.add_process(pid, build)
-    return redirect(PRE+'/watch/{1}/{2}/{0}/#{0};{1};{2}'.format(pid, job_label, build.label))
+    return redirect(url_for('watch_build', job_label=job_label, build_label=build.label, pid=pid))
 
 # watch
-
-@app.route(PRE+'/watch')
-@app.route(PRE+'/watch/<job_label>/<build_label>/<pid>/')
-def websocket_page(job_label=None, build_label=None, pid=None):
-    if pid is not None:
-        job = services.get_job(job_label)
-        build = job.builds[build_label]
-    return render_template('watch.html', **locals())
 
 @app.route(PRE+'/job/<job_label>/build/<build_label>/watch/<pid>')
 @app.route(PRE+'/job/<job_label>/build/<build_label>/watch/')
@@ -113,8 +105,9 @@ def watch_build(job_label, build_label=None, pid=None):
         else:
             pid = builds[0].proc
             build_label = builds[0].label
-    return redirect(PRE+'/watch/{1}/{2}/{0}/#{0};{1};{2}'.format(pid, job_label, build_label))
-
+    job = services.get_job(job_label)
+    build = services.get_build_of_job(job_label, build_label)
+    return render_template('watch.html', **locals())
 
 
 ### API ###

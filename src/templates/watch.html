@@ -5,7 +5,6 @@
 {% include "navbar.html" %}
 <div class="row">
 
-{% if job is not none and job is not undefined and build is not none and build is not undefined %}
 <ul class="breadcrumbs">
   <li><a href="{{ url_for('index') }}">JOBS</a></li>
   <li><a href="{{ url_for('view_job', job_label=job.label) }}">{{ job.label }}</a></li>
@@ -20,7 +19,6 @@
     <h6>Command used</h6>
     <pre class="code">{{ build.cmd }}</pre>
 
-{% endif %}
 <h6>Output</h6>
 <pre id="log"></pre>
 </div>
@@ -31,11 +29,9 @@
 <script>
     $(function(){
         var lineno = 0;
-        var hashstring = window.location.hash.substring(1).split(';');
-        console.log(hashstring);
-        var build_pid = hashstring[0],
-            job_label = hashstring[1],
-            build_label = hashstring[2];
+	var build_pid = '{{ pid }}',
+            job_label = '{{ job.label }}',
+	    build_label = '{{ build.label }}';
         var ws = new WebSocket("ws://" + document.domain + ":8010/websocket");
         window.ws = ws; // debugging purpose
         var logspace = document.querySelector('#log');
@@ -58,12 +54,12 @@
                 window.scrollTo(0, document.body.scrollHeight); // scroll down
             } else if (msg.type === '<FABKINS_END>') {
                 var end_link = document.createElement('a');
-		end_link.href = '{{ url_for('index') }}job/' + job_label + '/';
-                end_link.innerText = 'Build finished ! Go back to the job';
+		end_link.href = '{{ url_for('view_build', job_label=job.label, build_label=build.label) }}';
+                end_link.innerText = 'Build finished ! Go to the result';
                 logspace.appendChild(end_link);
             } else if (msg.type === 'NO_PROCESS') {
                 // oops, this build doesn't exist (any more)
-		logspace.innerHTML = '<a href="{{ url_for('index') }}job/' + job_label + '/"><i class="icon-info-sign"></i> Woops, build already finished ! Go back to the job</a>';
+		logspace.innerHTML = '<a href="{{ url_for('view_build', job_label=job.label, build_label=build.label) }}"><i class="icon-info-sign"></i> Woops, build already finished ! Go to the result</a>';
             }
         };
 
