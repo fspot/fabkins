@@ -10,7 +10,7 @@ PREFIX = "/fabkins"
 
 TCP_PORT = 8011
 SECRET_KEY = os.urandom(24)
-DEBUG = True
+DEBUG = False
 TCP_CLIENT_TIMEOUT = 5
 
 DEFAULT_FABFILE = '''#!/usr/bin/env python

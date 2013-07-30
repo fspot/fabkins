@@ -109,6 +109,13 @@ def watch_build(job_label, build_label=None, pid=None):
     build = services.get_build_of_job(job_label, build_label)
     return render_template('watch.html', **locals())
 
+### ERRORS ###
+##############
+
+@app.errorhandler(500)
+def ma_page_erreur(error):
+    return render_template('500.html')
+
 
 ### API ###
 ###########
