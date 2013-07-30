@@ -1,0 +1,12 @@
+{% for category in ['alert', 'success', 'info', 'secondary'] %}
+    {% with msgs = get_flashed_messages(category_filter=[category]) %}
+        {% if msgs %}
+            {% for m in msgs %}
+                <div data-alert class="alert-box{{ ' '+category if category != 'info' else ''  }}">
+                    {{  m|safe }}
+                    <a href="#" class="close">&times;</a>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endfor %}

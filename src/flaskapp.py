@@ -5,7 +5,7 @@ import os
 import datetime
 from time import time
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for, g
+from flask import Flask, render_template, jsonify, request, redirect, url_for, g, flash
 
 import settings
 import services

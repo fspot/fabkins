@@ -3,7 +3,9 @@
 
 {% block main %}
 {% include "navbar.html" %}
+
 <div class="row">
+{% include "flashed.html" %}
 
 <ul class="breadcrumbs">
   <li><a href="{{ url_for('index') }}">JOBS</a></li>
