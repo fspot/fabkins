@@ -14,63 +14,20 @@
     <!-- Left Nav Section -->
     <ul class="left">
       <li class="divider"></li>
-      <li class="has-dropdown">
-        <a class="active" href="#">Jobs</a>
-        <ul class="dropdown">
-          <li><label>Section Name</label></li>
-          <li><a href="#" class="">Dropdown Level 1</a></li>
-          <li><a href="#">Dropdown Option</a></li>
-          <li><a href="#">Dropdown Option</a></li>
-          <li class="divider"></li>
-          <li><label>Section Name</label></li>
-          <li><a href="#">Dropdown Option</a></li>
-          <li><a href="#">Dropdown Option</a></li>
-          <li><a href="#">Dropdown Option</a></li>
-          <li class="divider"></li>
-          <li><a href="#">See all &rarr;</a></li>
-        </ul>
-      </li>
+      <li><a href="{{ url_for('index') }}">Jobs</a></li>
       <li class="divider"></li>
-      <li class="has-dropdown">
-        <a href="#">Builds</a>
-        <ul class="dropdown">
-          <li><a href="#">Dropdown Option</a></li>
-          <li><a href="#">Dropdown Option</a></li>
-          <li><a href="#">Dropdown Option</a></li>
-          <li class="divider"></li>
-          <li><a href="#">See all &rarr;</a></li>
-        </ul>
-      </li>
+      <li><a href="{# url_for('history') #}">History</a></li>
       <li class="divider"></li>
-      <li><a href="#">Stats</a></li>
-
+      <li><a href="{# url_for('status') #}">Status</a></li>
     </ul>
 
     <!-- Right Nav Section -->
     <ul class="right">
       <li class="divider"></li>
       <li class="has-dropdown">
-        <a href="#">Admin</a>
+        <a href="{# url_for('administration') #}">Admin</a>
         <ul class="dropdown">
           <li><label>Section Name</label></li>
-          <li class="has-dropdown">
-            <a href="#" class="">Has Dropdown, Level 1</a>
-            <ul class="dropdown">
-              <li><a href="#">Dropdown Options</a></li>
-              <li><a href="#">Dropdown Options</a></li>
-              <li class="has-dropdown">
-                <a href="#">Has Dropdown, Level 2</a>
-                <ul class="dropdown test">
-                  <li><a href="#">Subdropdown Option</a></li>
-                  <li><a href="#">Subdropdown Option</a></li>
-                  <li><a href="#">Subdropdown Option</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Subdropdown Option</a></li>
-              <li><a href="#">Subdropdown Option</a></li>
-              <li><a href="#">Subdropdown Option</a></li>
-            </ul>
-          </li>
           <li><a href="#">Dropdown Option</a></li>
           <li><a href="#">Dropdown Option</a></li>
           <li class="divider"></li>
@@ -83,7 +40,7 @@
         </ul>
       </li>
       <li class="divider"></li>
-      <li><a href="#">Logout</a></li>
+      <li><a href="{# url_for('logout') #}">Logout</a></li>
       <li class="divider"></li>
     </ul>
   </section>
