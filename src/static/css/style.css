@@ -16,7 +16,8 @@ pre.altcode {
 	color: #1E1C27;
 	background-color: #DEE7EA;
 	padding: 5px;
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 	padding: 5px;
 	min-height: 20px;
 	max-height: 35px;
@@ -52,3 +53,4 @@ pre#log a {
 .green {color: #98CC3D;}
 .red {color: #B63024;}
 .moreright {padding-left: 30px;}
+.center {text-align: center;}

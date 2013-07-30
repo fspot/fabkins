@@ -3,6 +3,7 @@
 
 import os
 from os.path import join
+import unicodedata
 
 from database import db
 import settings
@@ -60,5 +61,9 @@ def write_output(pid, lines):
     build.write_output(lines)
 
 def labelify(title):
-    # TODO : handle special characters
-    return title.replace(' ', '_').lower()
+    # title must be utf8 encoded
+    s = title.strip().replace(' ', '_').lower()
+    return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+
+def delete_build_of_job(job_label, build_label):
+    db.delete_build(job_label, build_label)

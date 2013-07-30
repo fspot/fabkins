@@ -7,6 +7,7 @@ from time import time
 
 from flask import Flask, render_template, jsonify, request, redirect, url_for, g, flash
 
+from decorators import need_correct_job_label, need_correct_job_and_build_label
 import settings
 import services
 
@@ -22,13 +23,35 @@ def index():
     return render_template('jobs.html', jobs=jobs)
 
 @app.route(PRE+'/job/<job_label>/')
+@need_correct_job_label
 def view_job(job_label):
-    job = services.get_job(job_label)
+    try:
+        job = services.get_job(job_label)
+    except:
+        flash(u'The job "%s" does not exist' % job_label, 'alert')
+        return redirect(url_for('index'))
     doing = [b for b in job.builds.itervalues() if b.status == "doing"] or None
     done = [b for b in job.builds.itervalues() if b.status == "done"] or None
     return render_template('job.html', job=job, doing=doing, done=done)
 
+@app.route(PRE+'/job/<job_label>/', methods=['POST'])
+@need_correct_job_label
+def delete_builds(job_label):
+    builds = request.form.get("builds")
+    if builds is not None:
+        builds = builds.split(',')
+        for build_label in builds:
+            try:
+                services.delete_build_of_job(job_label, build_label)
+            except:
+                flash(u'An error occured during build deletion', 'alert')
+                break
+        else:
+            flash(u'%d builds were removed' % len(builds), 'success')
+    return redirect(url_for('view_job', job_label=job_label))
+
 @app.route(PRE+'/job/<job_label>/build/<build_label>/')
+@need_correct_job_and_build_label
 def view_build(job_label, build_label):
     job = services.get_job(job_label)
     build = services.get_build_of_job(job_label, build_label)
@@ -48,23 +71,33 @@ def new_job_post():
     title = request.form.get('title')
     description = request.form.get('description')
     fabfile = request.form.get('fabfile')
-    if title is None or description is None or fabfile is None:
-        return render_template('new_job.html', fabfile=settings.DEFAULT_FABFILE)
-    label = services.labelify(title)
-    job = services.create_job(label, title, description, fabfile)
-    return redirect(url_for('view_job', job_label=job.label))
+    if None not in (title, description, fabfile):
+        title = title.strip()
+        description = description.strip()
+        if title != '' and description != '':
+            label = services.labelify(title)
+            job = services.create_job(label, title, description, fabfile)
+            return redirect(url_for('view_job', job_label=job.label))
+    # else : error !
+    flash(u'Wrong data submited, try again', 'alert')
+    if fabfile is None:
+        fabfile = settings.DEFAULT_FABFILE
+    return render_template('new_job.html', fabfile=fabfile)
 
 @app.route(PRE+'/job/<job_label>/edit/')
+@need_correct_job_label
 def edit_job(job_label):
     job = services.get_job(job_label)
     fabfile = ''.join(job.fabfile())
     return render_template('new_job.html', fabfile=fabfile, edit=True, job=job)
 
 @app.route(PRE+'/job/<job_label>/edit/', methods=['POST'])
+@need_correct_job_label
 def edit_job_post(job_label):
     job = services.get_job(job_label)
     fabfile = request.form.get('fabfile')
     if fabfile is None:
+        flash(u'Wrong data submited, try again', 'alert')
         fabfile = ''.join(job.fabfile())
         return render_template('new_job.html', fabfile=fabfile, edit=True, job=job)
     services.edit_job(job_label, fabfile)
@@ -73,11 +106,13 @@ def edit_job_post(job_label):
 # launch
 
 @app.route(PRE+'/job/<job_label>/build/launch/')
+@need_correct_job_label
 def prepare_build_job(job_label):
     job = services.get_job(job_label)
     return render_template('run_form.html', job=job)
 
 @app.route(PRE+'/job/<job_label>/build/launch/', methods=['POST'])
+@need_correct_job_label
 def build_job(job_label):
     fabfile = services.get_fabfile_path(job_label)
     cmd = "fab -f {0} {1}".format(
@@ -94,6 +129,7 @@ def build_job(job_label):
 @app.route(PRE+'/job/<job_label>/build/<build_label>/watch/<pid>')
 @app.route(PRE+'/job/<job_label>/build/<build_label>/watch/')
 @app.route(PRE+'/job/<job_label>/watch/')
+@need_correct_job_label
 def watch_build(job_label, build_label=None, pid=None):
     if pid is None and build_label is not None:
         pid = services.process_of_build(job_label, build_label) or '0'
@@ -131,11 +167,13 @@ def api_list_jobs():
     return jsonify({'jobs': jobs})
 
 @app.route(PRE+'/api/job/<job_label>/')
+@need_correct_job_label
 def api_view_job(job_label):
     job = services.get_job(job_label)
     return jsonify({job_label: job.to_dict()})
 
 @app.route(PRE+'/api/job/<job_label>/build/')
+@need_correct_job_label
 def api_builds_of_job(job_label):
     builds = services.get_builds_of_job(job_label)
     builds = [{bl: b.to_dict()} for bl, b in builds.iteritems()]

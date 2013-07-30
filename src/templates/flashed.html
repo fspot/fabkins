@@ -3,7 +3,7 @@
         {% if msgs %}
             {% for m in msgs %}
                 <div data-alert class="alert-box{{ ' '+category if category != 'info' else ''  }}">
-                    {{  m|safe }}
+                    {{  m }}
                     <a href="#" class="close">&times;</a>
                 </div>
             {% endfor %}

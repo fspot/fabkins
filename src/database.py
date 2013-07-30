@@ -3,8 +3,9 @@
 
 import os
 from os.path import join
-import json
 import datetime
+import json
+import shutil
 from time import time
 
 import settings
@@ -81,5 +82,13 @@ class Database(object):
         build.json['code'] = args[0].strip()
         build.save()
         del self.procs[pid]
+
+    def delete_build(self, job_label, build_label):
+        job = self.get_job(job_label)
+        build = job.builds[build_label]
+        assert(build.status == "done")
+        del job.builds[build_label]
+        build_dir = join(settings.WORKDIR, 'jobs', job_label, 'builds', build_label)
+        shutil.rmtree(build_dir)
 
 db = Database()

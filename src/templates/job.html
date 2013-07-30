@@ -22,7 +22,6 @@
     <tr>
       <th width="180">Build</th>
       <th>command line</th>
-      <th width="200">started at</th>
       <th>duration</th>
       <th>status</th>
     </tr>
@@ -31,9 +30,8 @@
     {% for build in doing|sort(attribute='start', reverse=True) %}
       <tr>
         <td><a href="{{ url_for('view_build', job_label=job.label, build_label=build.label) }}">
-        {{ build.label }}</a></td>
+        {{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</a></td>
         <td><pre class="altcode">{{ build.cmd }}</pre></td>
-        <td>{{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</td>
         <td>{{ (gettime() - build.start) | duration }}</td>
         <td><a href="{{ url_for('watch_build', job_label=job.label, build_label=build.label) }}"><i class="icon-spinner"></i></a></td>
       </tr>
@@ -49,23 +47,23 @@
     <tr>
       <th width="180">Build</th>
       <th>command line</th>
-      <th width="200">started at</th>
       <th>duration</th>
       <th>status</th>
+      <th width="80"><a href="#" id="delete-all"><i class="icon-remove"></i> delete</a></th>
     </tr>
   </thead>
   <tbody>
     {% for build in done|sort(attribute='start', reverse=True) %}
       <tr>
         <td><a href="{{ url_for('view_build', job_label=job.label, build_label=build.label) }}">
-        {{ build.label }}</a></td>
+        {{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</a></td>
         <td><pre class="altcode">{{ build.cmd }}</pre></td>
-        <td>{{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</td>
         <td>{{ (build.end - build.start) | duration }}</td>
         <td>
           <i class="icon-thumbs-{{ 'up-alt' if build.code == '0' else 'down' }}"></i>
-          ({{ build.code }})
+          / {{ build.code }}
         </td>
+        <td class="center"><input type="checkbox" name="{{ build.label }}"></td>
       </tr>
     {% endfor %}
   </tbody>
@@ -77,4 +75,80 @@
 {% endif %}
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+
+  <div id="del-modal" class="reveal-modal">
+    <h2 id="del-h"></h2>
+    <p class="lead" id="del-p"></p>
+    <p id="del-p2">
+      <a href="#" id="del-proceed" class="button">Proceed</a>
+      <a href="#" id="del-cancel" class="secondary button">Cancel</a>
+    </p>
+    <a class="close-reveal-modal">&#215;</a>
+  </div>
+
+  <script>
+  $(function() {
+    function get_checked () {
+      var checked = $('input[type="checkbox"]:checked');
+      var label_list = [];
+      for (var i = checked.length - 1; i >= 0; i--) {
+        label_list.push(checked[i].name);
+      };
+      return label_list;
+    }
+
+    function post_to_url(path, params, method) {
+      method = method || "post";
+
+      var form = document.createElement("form");
+      form.setAttribute("method", method);
+      form.setAttribute("action", path);
+
+      for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+          var hiddenField = document.createElement("input");
+          hiddenField.setAttribute("type", "hidden");
+          hiddenField.setAttribute("name", key);
+          hiddenField.setAttribute("value", params[key]);
+
+          form.appendChild(hiddenField);
+        }
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+
+    $('#delete-all').on('click', function (e) {
+      var checked = get_checked();
+      if (checked.length === 0) {
+        $('#del-h').html("No builds selected");
+        $('#del-p').html("You don't have selected any build in the list !");
+        $('#del-p2').hide();
+        $('#del-modal').foundation('reveal', 'open');
+      } else {
+        $('#del-h').html("Are you sure ?");
+        $('#del-p').html("You are about to delete " + checked.length + " builds. Proceed ?");
+        $('#del-p2').show();
+        $('#del-modal').foundation('reveal', 'open');
+      }
+      return false;
+    });
+
+    $('#del-proceed').on('click', function (e) {
+      var checked = get_checked().join(',');
+      post_to_url("", {'builds': checked});
+      return false;
+    });
+
+    $('#del-cancel').on('click', function (e) {
+      $('#del-modal').foundation('reveal', 'close');
+      return false;
+    });
+  });
+  </script>
 {% endblock %}
