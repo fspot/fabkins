@@ -54,3 +54,5 @@ pre#log a {
 .red {color: #B63024;}
 .moreright {padding-left: 30px;}
 .center {text-align: center;}
+.monospace {font-family: "monospace", "courier new"; font-weight: bold;}
+

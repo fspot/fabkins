@@ -4,6 +4,8 @@
 import os
 from os.path import join
 import unicodedata
+import shlex
+import subprocess
 
 from database import db
 import settings
@@ -67,3 +69,15 @@ def labelify(title):
 
 def delete_build_of_job(job_label, build_label):
     db.delete_build(job_label, build_label)
+
+def get_fab_l_of_job(job_label):
+    fabfile = get_fabfile_path(job_label) 
+    cmd = 'fab -f "%s" -l' % fabfile
+    splitted = shlex.split(cmd)
+    proc = subprocess.Popen(
+        splitted,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    return proc.stdout.read()
+

@@ -4,7 +4,9 @@
 {% include "navbar.html" %}
 
 <div class="row">
+
 {% include "flashed.html" %}
+
 <ul class="breadcrumbs">
   <li><a href="{{ url_for('index') }}">JOBS</a></li>
   <li><a href="{{ url_for('view_job', job_label=job.label) }}">{{ job.label }}</a></li>
@@ -13,16 +15,12 @@
 
 <h1>{{ job.title }}</h1>
 <h5 class="subheader">{{ job.description }}</h5>
-</div>
 
-<div class="row">
-  <br>
-  <a href=""><i class="icon-question-sign"></i> Need some help ?</a>
-  <br><br>
-</div>
+<h6>Usage <a href="">(<i class="icon-question-sign"></i>)</a></h6>
+<pre id="log">{{ fab_l }}</pre>
 
 <form action="" method="post">
-  <div class="row collapse">
+  <div class="row collapse monospace">
     <div class="small-3 large-2 columns">
       <span class="prefix">$ fab</span>
     </div>
@@ -30,9 +28,8 @@
       <input type="text" name="args" placeholder="command line arguments...">
     </div>
   </div>
-  <div class="row">
     <input type="submit" class="small button" value="> Launch !"><br>
-  </div>
 </form>
 
+</div>
 {% endblock %}

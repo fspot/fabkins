@@ -101,6 +101,7 @@ def new_job_post():
         if title != '' and description != '':
             label = services.labelify(title)
             job = services.create_job(label, title, description, fabfile)
+            flash(u'Job created', 'success')
             return redirect(url_for('view_job', job_label=job.label))
     # else : error !
     flash(u'Wrong data submited, try again', 'alert')
@@ -127,6 +128,7 @@ def edit_job_post(job_label):
         fabfile = ''.join(job.fabfile())
         return render_template('new_job.html', fabfile=fabfile, edit=True, job=job)
     services.edit_job(job_label, fabfile)
+    flash(u'Job edited', 'success')
     return redirect(url_for('view_job', job_label=job.label))
 
 # launch
@@ -136,7 +138,8 @@ def edit_job_post(job_label):
 @need_correct_job_label
 def prepare_build_job(job_label):
     job = services.get_job(job_label)
-    return render_template('run_form.html', job=job)
+    fab_l = services.get_fab_l_of_job(job_label)
+    return render_template('run_form.html', **locals())
 
 @app.route(PRE+'/job/<job_label>/build/launch/', methods=['POST'])
 @need_root
