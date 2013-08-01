@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import os
 from os.path import join
 import unicodedata
 import shlex

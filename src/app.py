@@ -4,7 +4,6 @@
 ### IMPORTS : stdlib ; libs ; mycode ###
 ########################################
 
-import gevent
 from gevent.server import StreamServer
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
