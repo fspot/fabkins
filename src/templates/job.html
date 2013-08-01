@@ -40,6 +40,31 @@
 </table>
 {% endif %}
 
+{% if todo is not none %}
+<h4>#{{ todo | length }} build{% if todo|length > 1 %}s{% endif %} pending</h4>
+<table>
+  <thead>
+    <tr>
+      <th width="180">Build</th>
+      <th>command line</th>
+      <th>since</th>
+      <th>status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for build in todo|sort(attribute='created_at', reverse=True) %}
+      <tr>
+        <td><a href="{{ url_for('view_build', job_label=job.label, build_label=build.label) }}">
+        {{ build.created_at | strftime("%d %b %Y, %H:%M:%S") }}</a></td>
+        <td><pre class="altcode">{{ build.cmd }}</pre></td>
+        <td>{{ (gettime() - build.created_at) | duration }}</td>
+        <td><i class="icon-moon"></i></a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
 {% if done is not none %}
 <h4>#{{ done | length }} build{% if done|length > 1 %}s{% endif %} finished</h4>
 <table>
@@ -70,7 +95,7 @@
 </table>
 {% endif %}
 
-{% if doing is none and done is none %}
+{% if doing is none and todo is none and  done is none %}
 <p>No build history yet :(</p>
 {% endif %}
 

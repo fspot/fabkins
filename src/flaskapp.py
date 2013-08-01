@@ -50,9 +50,10 @@ def view_job(job_label):
     except:
         flash(u'The job "%s" does not exist' % job_label, 'alert')
         return redirect(url_for('index'))
-    doing = [b for b in job.builds.itervalues() if b.status == "doing"] or None
-    done = [b for b in job.builds.itervalues() if b.status == "done"] or None
-    return render_template('job.html', job=job, doing=doing, done=done)
+    done = services.get_builds_of_job(job_label, status="done") or None
+    doing = services.get_builds_of_job(job_label, status="doing") or None
+    todo = services.get_builds_of_job(job_label, status="todo") or None
+    return render_template('job.html', **locals())
 
 @app.route(PRE+'/job/<job_label>/', methods=['POST'])
 @need_correct_job_label
@@ -79,7 +80,7 @@ def view_build(job_label, build_label):
     build = services.get_build_of_job(job_label, build_label)
     success = (build.status == "done" and build.code == "0")
     if build.status == "done":
-        output = ''.join(build.output())
+        output = ''.join(build.output()).decode('utf8')
     return render_template('build.html', **locals())
 
 # new/edit job

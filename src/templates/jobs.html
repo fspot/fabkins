@@ -35,13 +35,15 @@
           <i class="icon-caret-down"></i></a>
           <ul id="drop{{ job.label }}" class="f-dropdown" data-dropdown-content>
             <li><a href="{% if job.builds.values() | filtattrval("status", "doing") | length == 1 %}{{ url_for('watch_build', job_label=job.label) }}{% else %}{{ url_for('view_job', job_label=job.label) }}{% endif %}"><i class="icon-spinner"></i> {{ job.builds.values() | filtattrval("status", "doing") | length }} running</a></li>
+            <li><a href="{{ url_for('view_job', job_label=job.label) }}"><i class="icon-moon"></i> {{ job.builds.values() | filtattrval("status", "todo") | length }} pending</a></li>
+            <li><a href="#">---</a></li>
             <li><a href="{{ url_for('view_job', job_label=job.label) }}"><i class="icon-thumbs-up-alt"></i> {{ job.builds.values() | filtattrval("code", "0") | length }} success</a></li>
             <li><a href="{{ url_for('view_job', job_label=job.label) }}"><i class="icon-thumbs-down"></i> {{ job.builds.values() | filtattrval("code", "0", True) | length }} failed</a></li>
             <li><a href="#">---</a></li>
             <li><a href="{{ url_for('view_job', job_label=job.label) }}">See all &rarr;</a></li>
           </ul>
         </td>
-        <td><a href="{{ url_for('prepare_build_job', job_label=job.label) }}"><i class="icon-play-circle"></i></a></td>
+        <td><a href="{{ url_for('prepare_build_job', job_label=job.label) }}"><i class="icon-youtube-play"></i></a></td>
       </tr>
     {% endfor %}
   </tbody>
