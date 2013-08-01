@@ -227,7 +227,6 @@ def web_hook(key, job_label, b64before=None):
     args = base64.decodestring(b64before) + data
     fabfile = services.get_fabfile_path(job_label)
     cmd = 'fab -f "{0}" {1}'.format(fabfile, args)
-    print "CMD IZ", repr(cmd)
     build = services.create_build(job_label, 'fab %s' % args)
     build.full_cmd = cmd
     doing = services.get_builds_of_job(job_label, status="doing")
