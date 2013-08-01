@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import base64
+import json
 import os
 import datetime
 import hashlib
@@ -82,6 +84,22 @@ def view_build(job_label, build_label):
     if build.status == "done":
         output = ''.join(build.output()).decode('utf8')
     return render_template('build.html', **locals())
+
+@app.route(PRE+'/history/')
+@need_root
+def view_history():
+    todo, doing, done = [], [], []
+    for l in services.get_all_jobs().iterkeys():
+        new_todo = [(l,b) for b in services.get_builds_of_job(l, "todo")]
+        new_doing = [(l,b) for b in services.get_builds_of_job(l, "doing")]
+        new_done = [(l,b) for b in services.get_builds_of_job(l, "done")]
+        todo.extend(new_todo)
+        doing.extend(new_doing)
+        done.extend(new_done)
+    todo.sort(key=lambda x:x[1].created_at, reverse=True)
+    doing.sort(key=lambda x:x[1].start, reverse=True)
+    done.sort(key=lambda x:x[1].start, reverse=True)
+    return render_template('history.html', **locals())
 
 # new/edit job
 
@@ -189,6 +207,34 @@ def watch_build(job_label, build_label=None, pid=None):
 def ma_page_erreur(error):
     return render_template('500.html')
 
+
+### WebHook ###
+###############
+
+@app.route(PRE+'/hook/<key>/<job_label>/', methods=['GET', 'POST'])
+@app.route(PRE+'/hook/<key>/<job_label>/<b64before>/', methods=['GET', 'POST'])
+@need_correct_job_label
+def web_hook(key, job_label, b64before=None):
+    if key != settings.WEBHOOK_KEY:
+        return jsonify({'response': 'wrong key'})
+    parallelize = request.args.get('parallelize')
+    if b64before is None:
+        b64before = request.args.get('b64before') or ''
+    data = ''
+    if request.method == 'POST':
+        data = dict(request.form) or dict(request.json)
+        data = "'{0}'".format(json.dumps(data).replace(',', '\,'))
+    args = base64.decodestring(b64before) + data
+    fabfile = services.get_fabfile_path(job_label)
+    cmd = 'fab -f "{0}" {1}'.format(fabfile, args)
+    print "CMD IZ", repr(cmd)
+    build = services.create_build(job_label, 'fab %s' % args)
+    build.full_cmd = cmd
+    doing = services.get_builds_of_job(job_label, status="doing")
+    if parallelize or len(doing) == 0:
+        pid = app.kmd.cmd(cmd)
+        services.add_process(pid, build)
+    return jsonify({'response': 'thx'})
 
 ### API ###
 ###########

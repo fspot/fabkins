@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% include "navbar.html" %}
+
+<div class="row">
+{% include "flashed.html" %}
+<ul class="breadcrumbs">
+  <li class="current"><a href="#">HISTORY</a></li>
+</ul>
+
+<h1>Build history</h1>
+
+{% if doing|length != 0 %}
+<h4>#{{ doing | length }} build{% if doing|length > 1 %}s{% endif %} running</h4>
+<table>
+  <thead>
+    <tr>
+      <th width="160">Job</th>
+      <th width="180">Build</th>
+      <th>command line</th>
+      <th>duration</th>
+      <th>status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for job_label,build in doing %}
+      <tr>
+        <td><a href="{{ url_for('view_job', job_label=job_label) }}">{{ job_label }}</a></td>
+        <td><a href="{{ url_for('view_build', job_label=job_label, build_label=build.label) }}">
+        {{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</a></td>
+        <td><pre class="altcode">{{ build.cmd }}</pre></td>
+        <td>{{ (gettime() - build.start) | duration }}</td>
+        <td><a href="{{ url_for('watch_build', job_label=job_label, build_label=build.label) }}"><i class="icon-spinner"></i></a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if todo|length != 0 %}
+<h4>#{{ todo | length }} build{% if todo|length > 1 %}s{% endif %} pending</h4>
+<table>
+  <thead>
+    <tr>
+      <th width="160"160>Job</th>
+      <th width="180">Build</th>
+      <th>command line</th>
+      <th>since</th>
+      <th>status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for job_label,build in todo %}
+      <tr>
+        <td><a href="{{ url_for('view_job', job_label=job_label) }}">{{ job_label }}</a></td>
+        <td><a href="{{ url_for('view_build', job_label=job_label, build_label=build.label) }}">
+        {{ build.created_at | strftime("%d %b %Y, %H:%M:%S") }}</a></td>
+        <td><pre class="altcode">{{ build.cmd }}</pre></td>
+        <td>{{ (gettime() - build.created_at) | duration }}</td>
+        <td><i class="icon-moon"></i></a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if done|length != 0 %}
+<h4>#{{ done | length }} build{% if done|length > 1 %}s{% endif %} finished</h4>
+<table>
+  <thead>
+    <tr>
+      <th width="160">Job</th>
+      <th width="180">Build</th>
+      <th>command line</th>
+      <th>duration</th>
+      <th>status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for job_label,build in done %}
+      <tr>
+        <td><a href="{{ url_for('view_job', job_label=job_label) }}">{{ job_label }}</a></td>
+        <td><a href="{{ url_for('view_build', job_label=job_label, build_label=build.label) }}">
+        {{ build.start | strftime("%d %b %Y, %H:%M:%S") }}</a></td>
+        <td><pre class="altcode">{{ build.cmd }}</pre></td>
+        <td>{{ (build.end - build.start) | duration }}</td>
+        <td>
+          <i class="icon-thumbs-{{ 'up-alt' if build.code == '0' else 'down' }}"></i>
+          / {{ build.code }}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if doing|length == 0 and todo|length == 0 and done|length == 0 %}
+  <p>No build history yet :(</p>
+{% endif %}
+
+</div>
+{% endblock %}
