@@ -49,7 +49,7 @@ def sender(outputs):
             break
         except:
             time.sleep(0.1)
-            count -= 1
+            count -= 0.1
     if count <= 0:
         logging.warn("/!\ Could not connect to tcp server /!\\")
         return
@@ -73,7 +73,7 @@ def master(queue, rep_queue, outputs):
         datefmt='%d/%m/%Y %H:%M:%S',
         filename="master.log"
     )
-    
+
     logging.info("<master up!>")
     workers = []
     while True:
@@ -96,6 +96,7 @@ def master(queue, rep_queue, outputs):
 
 
 def run_command(cmd, outputs=None):
+    import settings
     from multiprocessing import current_process
     import subprocess
     import shlex
@@ -133,4 +134,3 @@ def run_command(cmd, outputs=None):
 
     logging.info("<WORKER: CMD %s END !>" % cmd)
     return proc.poll()
-

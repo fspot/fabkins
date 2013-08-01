@@ -4,6 +4,7 @@
 ### IMPORTS : stdlib ; libs ; mycode ###
 ########################################
 
+import gevent
 from gevent.server import StreamServer
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
@@ -14,18 +15,17 @@ from tcpsocket import LinesHandler
 from websocket import handle_websocket
 
 
-### SOCKETS stuff ###
-#####################
+### Socket stuff ###
+####################
 
 sck = {}
 lines_handler = LinesHandler(sck)
 
 
-### WSGI APP stuff ###
+### WSGI app stuff ###
 ######################
 
 from flaskapp import app
-
 
 def my_app(environ, start_response):
     path = environ["PATH_INFO"]
@@ -37,14 +37,14 @@ def my_app(environ, start_response):
         return app(environ, start_response)
 
 
-### COMMANDER stuff ###
+### Commander stuff ###
 #######################
 
 app.kmd = Commander()
 app.kmd.start()
 
 
-### MAIN ###
+### main ###
 ############
 
 if __name__ == '__main__':
@@ -53,6 +53,6 @@ if __name__ == '__main__':
     tcp_server = StreamServer(('', settings.TCP_PORT), lines_handler.handle)
     try:
         tcp_server.serve_forever()
-    except KeyboardInterrupt:
+    except:
         pass
     app.kmd.stop()

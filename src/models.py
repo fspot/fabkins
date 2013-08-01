@@ -69,6 +69,8 @@ class Build(object):
 
     def to_dict(self, with_job=False):
         copy = self.json.copy()
+	if hasattr(self, 'start'):
+            copy.update({'start': self.start})
         copy.update({
             'status': self.status,
             'label': self.label,

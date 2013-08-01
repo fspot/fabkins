@@ -146,14 +146,18 @@ def prepare_build_job(job_label):
 @need_correct_job_label
 def build_job(job_label):
     fabfile = services.get_fabfile_path(job_label)
-    cmd = "fab -f {0} {1}".format(
-        fabfile,
-        request.form["args"].replace(',', '\,')
-    )
-    build = services.create_build(job_label, cmd)
-    pid = app.kmd.cmd(cmd)
-    services.add_process(pid, build)
-    return redirect(url_for('watch_build', job_label=job_label, build_label=build.label, pid=pid))
+    args = request.form["args"]
+    parallelize = (request.form["parallelize"] == u'on')
+    cmd = 'fab -f "{0}" {1}'.format(fabfile, args)
+    build = services.create_build(job_label, 'fab %s' % args)
+    build.full_cmd = cmd
+    doing = services.get_builds_of_job(job_label, status="doing")
+    if parallelize or len(doing) == 0:
+        pid = app.kmd.cmd(cmd)
+        services.add_process(pid, build)
+        return redirect(url_for('watch_build', job_label=job_label, build_label=build.label, pid=pid))
+    flash(u'Build queued', 'success')
+    return redirect(url_for('view_build', job_label=job_label, build_label=build.label))
 
 # watch
 

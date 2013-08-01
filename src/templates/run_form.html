@@ -18,6 +18,7 @@
 
 <h6>Usage <a href="">(<i class="icon-question-sign"></i>)</a></h6>
 <pre id="log">{{ fab_l }}</pre>
+<br>
 
 <form action="" method="post">
   <div class="row collapse monospace">
@@ -28,7 +29,24 @@
       <input type="text" name="args" placeholder="command line arguments...">
     </div>
   </div>
-    <input type="submit" class="small button" value="> Launch !"><br>
+
+  <div class="row">
+    <div class="small-4 small-centered columns">
+      <div class="small switch">
+        <input id="parallelize-off" name="parallelize" value="off" type="radio" checked>
+        <label for="parallelize-off" onclick="">Parallelize : Off</i></label>
+
+        <input id="parallelize-on" name="parallelize" value="on" type="radio">
+        <label for="parallelize-on" onclick="">
+          <i class="icon-exclamation-sign"></i> Parallelize : On
+        </label>
+
+        <span></span>
+      </div>
+      <input type="submit" class="small button expand" value="> Launch !">
+    </div>
+  </div>
+
 </form>
 
 </div>

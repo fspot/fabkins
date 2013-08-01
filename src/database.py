@@ -60,7 +60,7 @@ class Database(object):
         build_infos = {
             "cmd": cmd,
             "label": date,
-            "start": time(),
+            "created_at": time(),
         }
         f.write(json.dumps(build_infos, indent=2))
         f.close()
@@ -72,6 +72,7 @@ class Database(object):
     def add_process(self, pid, build):
         build.proc = pid
         build.status = "doing"
+        build.start = time()
         self.procs[pid] = build
 
     def close_process(self, pid, *args):
@@ -82,6 +83,7 @@ class Database(object):
         build.json['code'] = args[0].strip()
         build.save()
         del self.procs[pid]
+        return build
 
     def delete_build(self, job_label, build_label):
         job = self.get_job(job_label)
