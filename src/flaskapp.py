@@ -222,7 +222,7 @@ def web_hook(key, job_label, b64before=None):
         b64before = request.args.get('b64before') or ''
     data = ''
     if request.method == 'POST':
-        data = dict(request.form) or dict(request.json)
+        data = request.json or dict(request.form.items())
         data = "'{0}'".format(json.dumps(data).replace(',', '\,'))
     args = base64.decodestring(b64before) + data
     fabfile = services.get_fabfile_path(job_label)
