@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import base64
 import json
 import datetime
 import hashlib
@@ -211,19 +210,19 @@ def ma_page_erreur(error):
 ###############
 
 @app.route(PRE+'/hook/<key>/<job_label>/', methods=['GET', 'POST'])
-@app.route(PRE+'/hook/<key>/<job_label>/<b64before>/', methods=['GET', 'POST'])
+@app.route(PRE+'/hook/<key>/<job_label>/<before>/', methods=['GET', 'POST'])
 @need_correct_job_label
-def web_hook(key, job_label, b64before=None):
+def web_hook(key, job_label, before=None):
     if key != settings.WEBHOOK_KEY:
         return jsonify({'response': 'wrong key'})
     parallelize = request.args.get('parallelize')
-    if b64before is None:
-        b64before = request.args.get('b64before') or ''
+    if before is None:
+        before = request.args.get('before') or ''
     data = ''
     if request.method == 'POST':
         data = request.json or dict(request.form.items())
         data = "'{0}'".format(json.dumps(data).replace(',', '\,'))
-    args = base64.decodestring(b64before) + data
+    args = before + ":" + data
     fabfile = services.get_fabfile_path(job_label)
     cmd = 'fab -f "{0}" {1}'.format(fabfile, args)
     build = services.create_build(job_label, 'fab %s' % args)
