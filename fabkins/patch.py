@@ -8,8 +8,8 @@ from os.path import join
 
 
 def patch_fabric_local_flush():
-	venv = sys.prefix
-	opfile = join(venv, "lib", "python2.7", "site-packages", "fabric", "operations.py")
+	import fabric
+	opfile = join(fabric.__path__[0], "operations.py")
 	fd = open(opfile, 'r')
 	lines = fd.readlines()
 	fd.close()

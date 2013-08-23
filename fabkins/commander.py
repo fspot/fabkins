@@ -96,7 +96,6 @@ def master(queue, rep_queue, outputs):
 
 
 def run_command(cmd, outputs=None):
-    import settings
     from multiprocessing import current_process
     import subprocess
     import shlex

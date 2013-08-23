@@ -7,7 +7,7 @@ import shlex
 import subprocess
 
 from database import db
-import settings
+from settings import default_params
 
 
 def get_all_jobs():
@@ -29,7 +29,7 @@ def get_build_of_job(job_label, build_label):
     return get_builds_of_job(job_label)[build_label]
 
 def get_fabfile_path(job_label):
-    return join(settings.WORKDIR, 'jobs', job_label, 'fabfile.py')
+    return join(default_params.WORKDIR, 'jobs', job_label, 'fabfile.py')
 
 def create_build(job_label, cmd):
     return db.create_build(job_label, cmd)

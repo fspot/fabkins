@@ -5,7 +5,7 @@ from flask import redirect, url_for, flash, session
 from functools import wraps
 
 import services
-import settings
+from settings import default_params
 
 
 def need_correct_job_label(vue):
@@ -45,7 +45,7 @@ def need_correct_job_and_build_label(vue):
 def need_root(vue):
     @wraps(vue)
     def decorated(*args, **kwargs):
-        if session.get('pw') != settings.PASSWORD:
+        if session.get('pw') != default_params.PASSWORD:
             return redirect(url_for('login'))
         return vue(*args, **kwargs)
     return decorated

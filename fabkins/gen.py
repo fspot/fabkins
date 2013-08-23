@@ -3,16 +3,19 @@
 
 import os
 import shutil
+import sys
 
 import clize
 
 import fabkins
 
 
-@clize.clize
-def conf(dest="fabkins.ini"):
+@clize.clize(alias={'output': ('o',)})
+def conf(output="fabkins.ini"):
     """ Generate a default configuration file for fabkins. """
-    open(dest, "w")
+    from settings import write_config_file
+    write_config_file(output)
+
 
 @clize.clize
 def static(dest="static"):
@@ -22,16 +25,7 @@ def static(dest="static"):
 
 
 def conf_entry_point():
-    import sys
-    try:
-       conf(*sys.argv)
-    except clize.ArgumentError:
-       conf(sys.argv[0], '-h')
+    clize.run(conf)
 
 def static_entry_point():
-    import sys
-    try:
-        static(*sys.argv)
-    except clize.ArgumentError:
-        static(sys.argv[0], '-h')
-
+    clize.run(static)

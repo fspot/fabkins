@@ -11,20 +11,20 @@ from flask import (Flask, render_template, jsonify,
 
 from decorators import (need_correct_job_label,
     need_correct_job_and_build_label, need_root)
-import settings
+from settings import default_params, get_default_fabfile_content
 import services
 
-PRE = settings.PREFIX
+PRE = default_params.WEB_PREFIX
 app = Flask(__name__, static_url_path=PRE+'/static')
-app.secret_key = settings.SECRET_KEY
-app.debug = settings.DEBUG
+app.secret_key = default_params.SECRET_KEY
+app.debug = default_params.DEBUG
 
 # login
 
 @app.route(PRE+'/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        session['pw'] = hashlib.sha256(request.form['pw']).digest()
+        session['pw'] = hashlib.sha256(request.form['pw']).hexdigest()
         return redirect(url_for('index'))
     return render_template('login.html')
 
@@ -104,7 +104,7 @@ def view_history():
 @app.route(PRE+'/job/new/')
 @need_root
 def new_job():
-    return render_template('new_job.html', fabfile=settings.DEFAULT_FABFILE, edit=False)
+    return render_template('new_job.html', fabfile=get_default_fabfile_content(), edit=False)
 
 @app.route(PRE+'/job/new/', methods=['POST'])
 @need_root
@@ -123,7 +123,7 @@ def new_job_post():
     # else : error !
     flash(u'Wrong data submited, try again', 'alert')
     if fabfile is None:
-        fabfile = settings.DEFAULT_FABFILE
+        fabfile = get_default_fabfile_content()
     return render_template('new_job.html', fabfile=fabfile)
 
 @app.route(PRE+'/job/<job_label>/edit/')
@@ -213,7 +213,7 @@ def ma_page_erreur(error):
 @app.route(PRE+'/hook/<key>/<job_label>/<before>/', methods=['GET', 'POST'])
 @need_correct_job_label
 def web_hook(key, job_label, before=None):
-    if key != settings.WEBHOOK_KEY:
+    if key != default_params.WEBHOOK_KEY:
         return jsonify({'response': 'wrong key'})
     parallelize = request.args.get('parallelize')
     if before is None:
