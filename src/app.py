@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-### IMPORTS : stdlib ; libs ; mycode ###
-########################################
-
 from gevent.server import StreamServer
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
+import clize
 
 import settings
 from commander import Commander
@@ -36,17 +34,14 @@ def my_app(environ, start_response):
         return app(environ, start_response)
 
 
-### Commander stuff ###
-#######################
-
-app.kmd = Commander()
-app.kmd.start()
-
-
 ### main ###
 ############
 
-if __name__ == '__main__':
+@clize.clize
+def main():
+    """ Fabkins, a femto-jenkins based on fabfiles. """
+    app.kmd = Commander()
+    app.kmd.start()
     http_server = WSGIServer(('', settings.WEB_PORT), my_app, handler_class=WebSocketHandler)
     http_server.start()
     tcp_server = StreamServer(('', settings.TCP_PORT), lines_handler.handle)
@@ -55,3 +50,15 @@ if __name__ == '__main__':
     except:
         pass
     app.kmd.stop()
+
+def main_entry_point():
+    """ this function is an entry_point for main() """
+    import sys
+    try:
+       main(*sys.argv)
+    except clize.ArgumentError:
+       main(sys.argv[0], '-h')
+
+if __name__ == '__main__':
+    main_entry_point()
+
