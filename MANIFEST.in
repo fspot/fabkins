@@ -1,0 +1,12 @@
+include *.md
+
+recursive-include fabkins *.otf
+recursive-include fabkins *.woff
+recursive-include fabkins *.eot
+recursive-include fabkins *.svg
+recursive-include fabkins *.ttf
+
+recursive-include fabkins *.html
+recursive-include fabkins *.css
+recursive-include fabkins *.js
+
