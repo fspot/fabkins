@@ -19,9 +19,9 @@ setup(
     entry_points = {
         'console_scripts': [
             'fabkins = fabkins.app:main_entry_point',
-            'fabkins-patch-venv = fabkins.patch:main',
+            'fabkins-patch-venv = fabkins.patch:main_entry_point',
             'fabkins-gen-conf = fabkins.gen:conf_entry_point',
-	    'fabkins-gen-static = fabkins.gen:static_entry_point',
+            'fabkins-gen-static = fabkins.gen:static_entry_point',
         ],
     },
     license='MIT',

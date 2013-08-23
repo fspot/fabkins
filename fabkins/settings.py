@@ -49,14 +49,14 @@ def read_config_file(configfile):
     _seto(config, 'DEBUG', 'debug', cls=bool)
 
 
-def write_config_file(configfile):
+def write_config_file(configfile, password):
     import ConfigParser
     config = ConfigParser.RawConfigParser()
     params = [
         ('workdir', default_params.WORKDIR),
         ('web-port', default_params.WEB_PORT),
         ('web-prefix', default_params.WEB_PREFIX),
-        ('password', default_params.PASSWORD),
+        ('password', password),
         ('webhook-key', default_params.WEBHOOK_KEY),
     ]
     config.add_section(CONFIG_SECTION)

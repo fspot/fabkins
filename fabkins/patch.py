@@ -2,9 +2,10 @@
 # -*- coding:utf-8 -*-
 
 import sys
-import pdb
 import os
 from os.path import join
+
+import clize
 
 
 def patch_fabric_local_flush():
@@ -26,8 +27,9 @@ def patch_fabric_local_flush():
 	fd.writelines(lines)
 	fd.close()
 
-
+@clize.clize
 def main():
+	""" This tool lets you patch your fabkins virtualenv. """
 	try:
 		# check we are in a virtualenv:
 		if hasattr(sys, 'real_prefix'):
@@ -40,6 +42,9 @@ def main():
 		print "This tool lets you patch your fabkins virtualenv."
 		print "Usage : python patch.py"
 
+def main_entry_point():
+	clize.run(main)
+
 
 if __name__ == '__main__':
-	main()
+	main_entry_point()
