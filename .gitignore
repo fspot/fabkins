@@ -3,6 +3,9 @@
 *.sublime-workspace
 *.sublime-project
 
+# doc output
+docs/_build
+
 # C extensions
 *.so
 
