@@ -12,7 +12,7 @@ setup(
     author="fspot",
     author_email="fred@fspot.org",
     description="Fabkins, a femto-jenkins based on fabfiles",
-    long_description=open('README.md').read(),
+    long_description=''.join(open('README.md').readlines()[:16]),
     include_package_data=True,
     zip_safe=False,
     url='http://github.com/fspot/fabkins',
