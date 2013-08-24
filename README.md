@@ -78,7 +78,7 @@ Launch:
 # some output : it runs !
 ```
 
-You can access the app at [http://localhost:8010/fabkins]([http://localhost:8010/fabkins), password = "pass".
+You can access the app at [http://localhost:8010/fabkins](), password = "pass".
 
 Next steps : make nginx serve static content, and create an upstart job to control the service.
 
