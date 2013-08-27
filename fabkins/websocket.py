@@ -2,10 +2,10 @@
 # -*- coding:utf-8 -*-
 
 import json
-import services
 
 
 def handle_start(ws, msg, lines_handler):
+    import services
     ws.subscribe = msg['subscribe']
     info = services.info_process(ws.subscribe)
     if info is None:

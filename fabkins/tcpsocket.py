@@ -3,8 +3,6 @@
 
 import json
 
-import services
-
 
 class LinesHandler(object):
     def __init__(self, sck):
@@ -37,6 +35,7 @@ class LinesHandler(object):
                     'line': line
                 }
                 if 'END' in first_part:
+                    import services
                     services.write_output(pid, self.outputs[pid])
                     del self.outputs[pid]
                     services.close_process(pid, line)
