@@ -6,7 +6,7 @@ from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
 import clize
 
-from settings import default_params, read_config_file, TCP_PORT
+from settings import default_params, read_config_file, TCP_PORT, add_fab_to_env_path
 from commander import Commander
 from tcpsocket import LinesHandler
 from websocket import handle_websocket
@@ -40,6 +40,7 @@ def main(config_file="<path>", fabfile="<path>", workdir="<path>",
 
     ### Config stuff
 
+    add_fab_to_env_path()
     if config_file != "<path>": read_config_file(config_file)
 
     if fabfile != "<path>":     default_params.DEFAULT_FABFILE = fabfile

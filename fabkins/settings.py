@@ -77,3 +77,12 @@ def get_default_fabfile_content():
     else:
         fabfile = default_params.DEFAULT_FABFILE
     return open(fabfile, 'r').read()
+
+def add_fab_to_env_path():
+    # check that we are in a good virtualenv:
+    try:
+        import os, sys, fabric, os.path
+        if hasattr(sys, 'real_prefix'):
+            os.environ["PATH"] += ':' + os.path.join(sys.prefix, 'bin')
+    except:
+        pass

@@ -66,6 +66,7 @@ def sender(outputs):
 def master(queue, rep_queue, outputs):
     from multiprocessing import Process
     import logging
+    from settings import add_fab_to_env_path
 
     logging.basicConfig(
         level=logging.DEBUG,
@@ -75,6 +76,7 @@ def master(queue, rep_queue, outputs):
     )
 
     logging.info("<master up!>")
+    add_fab_to_env_path()
     workers = []
     while True:
         try:
