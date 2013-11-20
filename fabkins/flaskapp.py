@@ -218,11 +218,11 @@ def web_hook(key, job_label, before=None):
     parallelize = request.args.get('parallelize')
     if before is None:
         before = request.args.get('before') or ''
-    data = ''
+    data = ""
     if request.method == 'POST':
         data = request.json or dict(request.form.items())
-        data = "'{0}'".format(json.dumps(data).replace(',', '\,'))
-    args = before + ":" + data
+        data = ":'{0}'".format(json.dumps(data).replace(',', '\,'))
+    args = before + data
     fabfile = services.get_fabfile_path(job_label)
     cmd = 'fab -f "{0}" {1}'.format(fabfile, args)
     build = services.create_build(job_label, 'fab %s' % args)
