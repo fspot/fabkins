@@ -73,9 +73,9 @@ def main(config_file="<path>", fabfile="<path>", workdir="<path>",
 
     def my_app(environ, start_response):
         path = environ["PATH_INFO"]
-        if path == "/":
+        if path == "/":  # web prefix handle in flaskapp.py
             return app(environ, start_response)
-        elif path == "/websocket":
+        elif path == default_params.WEB_PREFIX + "/websocket":
             handle_websocket(environ["wsgi.websocket"], lines_handler)
         else:
             return app(environ, start_response)
