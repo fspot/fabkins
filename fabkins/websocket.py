@@ -8,19 +8,21 @@ import json
 
 def handle_start(ws, msg, lines_handler):
     import services
-    ws.subscribe = msg['subscribe']
-    info = services.info_process(ws.subscribe)
+    ws.handler.subscribe = msg['subscribe']
+    info = services.info_process(ws.handler.subscribe)
     if info is None:
         ws.send(json.dumps({'type': 'NO_PROCESS'}))
-        raise Exception("NO_PROCESS")
-    print 'WSS : subscription to', ws.subscribe
-    ws.state = 'subscribed'
-    lines_handler.sck[ws.label] = ws
+        print "WSS : woops, already finished !"
+        ws.close()
+        return
+    print 'WSS : subscription to', ws.handler.subscribe
+    ws.handler.state = 'subscribed'
+    lines_handler.sck[ws.handler.label] = ws
     # send begin build data here
-    for line in lines_handler.outputs[ws.subscribe]:
+    for line in lines_handler.outputs[ws.handler.subscribe]:
         ws.send(json.dumps({
             'type': 'line',
-            'pid': ws.subscribe,
+            'pid': ws.handler.subscribe,
             'line': line
         }))
 
@@ -33,17 +35,17 @@ def handle_msg(ws, msg):
 def handle(ws, msg, lines_handler):
     # load msg, check type TODO
     msg = json.loads(msg)
-    if ws.state == 'start':
+    if ws.handler.state == 'start':
         handle_start(ws, msg, lines_handler)
     else:
         handle_msg(ws, msg)
 
 
 def handle_websocket(ws, lines_handler):
-    ws.label = '{0}:{1}'.format(*ws.socket.getpeername())
-    ws.state = 'start'
-    ws.subscribe = None
-    print "<WSS : BEGIN OF %s>" % ws.label
+    ws.handler.label = '{0}:{1}'.format(*ws.handler.socket.getpeername())
+    ws.handler.state = 'start'
+    ws.handler.subscribe = None
+    print "<WSS : BEGIN OF %s>" % ws.handler.label
 
     while True:
         try:
@@ -56,6 +58,6 @@ def handle_websocket(ws, lines_handler):
             handle(ws, msg, lines_handler)
 
     # client quit
-    if ws.label in lines_handler.sck:
-        del lines_handler.sck[ws.label]
-    print "<WSS : END OF %s>" % ws.label
+    if ws.handler.label in lines_handler.sck:
+        del lines_handler.sck[ws.handler.label]
+    print "<WSS : END OF %s>" % ws.handler.label

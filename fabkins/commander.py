@@ -67,7 +67,10 @@ def sender(outputs):
 
     logging.info("<sender up!>")
     while True:
-        out = outputs.get()
+        try:
+            out = outputs.get()
+        except:
+            break
         line = ' '.join(to_unicode(e) for e in out)
         line = line.rstrip("\n") + "\n" # be sure there's 1 trailing \n
         print "::: to ze internets :", line,

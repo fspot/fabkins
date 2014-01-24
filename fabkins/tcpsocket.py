@@ -13,7 +13,7 @@ class LinesHandler(object):
 
     def dispatch(self, msg):
         for name, ws in self.sck.iteritems():
-            if ws.subscribe == msg['pid']:
+            if ws.handler.subscribe == msg['pid']:
                 print "sending %s to %s" % (repr(msg), name)
                 ws.send(json.dumps(msg))
 
