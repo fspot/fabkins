@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 from flask import redirect, url_for, flash, session
 from functools import wraps
 

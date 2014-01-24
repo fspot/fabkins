@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os, pwd
+import codecs
 
 TCP_PORT = 58010
 TCP_CLIENT_TIMEOUT = 5
@@ -62,7 +65,7 @@ def write_config_file(configfile, password):
     config.add_section(CONFIG_SECTION)
     for option, value in params:
         config.set(CONFIG_SECTION, option, value)
-    with open(configfile, 'wb') as conf_file:
+    with codecs.open(configfile, 'wb', encoding="utf-8") as conf_file:
         config.write(conf_file)
 
 
@@ -76,7 +79,7 @@ def get_default_fabfile_content():
             fabfile = os.path.join(os.path.dirname(os.path.realpath(__file__)), "default_fabfile.py")
     else:
         fabfile = default_params.DEFAULT_FABFILE
-    return open(fabfile, 'r').read()
+    return codecs.open(fabfile, 'r', encoding="utf-8").read()
 
 def add_fab_to_env_path():
     # check that we are in a good virtualenv:

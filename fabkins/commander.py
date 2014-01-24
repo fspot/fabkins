@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 from multiprocessing import Process, Queue
 
 
@@ -54,12 +56,22 @@ def sender(outputs):
         logging.warn("/!\ Could not connect to tcp server /!\\")
         return
 
+    def to_unicode(that):
+        if isinstance(that, int): # return code or pid
+            return unicode(that)
+        elif isinstance(that, unicode):
+            return that
+        elif isinstance(that, str): # raw output string, should be utf-8
+            return that.decode("utf-8")
+        raise TypeError("wasn't supposed to unicodize type %s" % repr(type(that)))
+
     logging.info("<sender up!>")
     while True:
         out = outputs.get()
-        line = ' '.join(out)
-        print "::: to ze internets :", line.rstrip("\n")
-        sk.sendall(line.rstrip("\n") + '\n')
+        line = ' '.join(to_unicode(e) for e in out)
+        line = line.rstrip("\n") + "\n" # be sure there's 1 trailing \n
+        print "::: to ze internets :", line,
+        sk.sendall(line.encode("utf-8"))
     logging.info("<sender down!>")
 
 
@@ -97,7 +109,7 @@ def master(queue, rep_queue, outputs):
     logging.info("<master down!>")
 
 
-def run_command(cmd, outputs=None):
+def run_command(cmd, outputs):
     from multiprocessing import current_process
     import subprocess
     import shlex
@@ -118,9 +130,9 @@ def run_command(cmd, outputs=None):
         logging.info("<WORKER: CMD %s WRONG>" % repr(splitted))
         return
 
-    outputs.put(['<FABKINS_BEGIN>', str(current_process().pid), cmd])
+    outputs.put(['<FABKINS_BEGIN>', current_process().pid, cmd])
 
-    line = ''
+    line = str() # yep, no unicode, because 'out' can be e.g. '\xc3'
     while True:
         out = proc.stdout.read(1)
         if out == '' and proc.poll() is not None:
@@ -128,10 +140,10 @@ def run_command(cmd, outputs=None):
         if out != '':
             line += out
             if out == '\n':
-                outputs.put([str(current_process().pid), line])
-                line = ''
+                outputs.put([current_process().pid, line])
+                line = str()
 
-    outputs.put(['<FABKINS_END>', str(current_process().pid), str(proc.poll())])
+    outputs.put(['<FABKINS_END>', current_process().pid, proc.poll()])
 
     logging.info("<WORKER: CMD %s END !>" % cmd)
     return proc.poll()

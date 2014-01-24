@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os
 from os.path import join
+import codecs
 import datetime
 import json
 import shutil
@@ -21,7 +24,7 @@ class Database(object):
         job_dir = join(default_params.WORKDIR, 'jobs', job_label)
         os.mkdir(job_dir)
         os.mkdir(join(job_dir, 'builds'))
-        f = open(join(job_dir, 'config.json'), 'w')
+        f = codecs.open(join(job_dir, 'config.json'), 'w', encoding="utf-8")
         job_infos = {
             "title": job_title,
             "label": job_label,
@@ -60,7 +63,7 @@ class Database(object):
         date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         build_dir = join(default_params.WORKDIR, 'jobs', job_label, 'builds', date)
         os.mkdir(build_dir)
-        f = open(join(build_dir, 'build_info.json'), 'w')
+        f = codecs.open(join(build_dir, 'build_info.json'), 'w', encoding="utf-8")
         build_infos = {
             "cmd": cmd,
             "label": date,

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 import sys
 import os
 from os.path import join

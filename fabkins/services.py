@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 from os.path import join
 import unicodedata
 import shlex
@@ -36,12 +38,12 @@ def create_build(job_label, cmd):
 
 def create_job(job_label, title, description, fabfile):
     job = db.create_job(job_label, title, description)
-    job.write_fabfile(fabfile.split('\n'))
+    job.write_fabfile(fabfile)
     return job
 
 def edit_job(job_label, fabfile):
     job = get_job(job_label)
-    job.write_fabfile(fabfile.split('\n'))
+    job.write_fabfile(fabfile)
     return job
 
 def add_process(pid, build):

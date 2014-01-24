@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 import json
 import datetime
 import hashlib
@@ -80,7 +82,7 @@ def view_build(job_label, build_label):
     build = services.get_build_of_job(job_label, build_label)
     success = (build.status == "done" and build.code == "0")
     if build.status == "done":
-        output = ''.join(build.output()).decode('utf8')
+        output = ''.join(build.output())
     return render_template('build.html', **locals())
 
 @app.route(PRE+'/history/')
@@ -201,9 +203,9 @@ def watch_build(job_label, build_label=None, pid=None):
 ### ERRORS ###
 ##############
 
-@app.errorhandler(500)
-def ma_page_erreur(error):
-    return render_template('500.html')
+# @app.errorhandler(500)
+# def ma_page_erreur(error):
+#     return render_template('500.html')
 
 
 ### WebHook ###

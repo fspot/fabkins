@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 from gevent.server import StreamServer
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler

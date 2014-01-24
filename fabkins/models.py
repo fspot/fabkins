@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 from os.path import join, basename
+import codecs
 import json
 
 
@@ -13,21 +16,22 @@ class Job(object):
         self.builds = self.db.get_builds(self.label, self)
 
     def fabfile(self):
-        return open(join(self.dir, 'fabfile.py')).readlines()
+        return codecs.open(join(self.dir, 'fabfile.py'), encoding="utf-8").readlines()
 
     def write_fabfile(self, lines):
-        f = open(join(self.dir, 'fabfile.py'), 'w')
-        f.writelines(lines)
+        f = codecs.open(join(self.dir, 'fabfile.py'), 'w', encoding="utf-8")
+        f.write(lines)
         f.close()
 
     def create_build(self, cmd):
         return self.db.create_build(self.label, cmd)
 
     def reload(self):
-        self.json = json.loads(open(join(self.dir, 'config.json')).read())
+        self.json = json.loads(codecs.open(join(self.dir, 'config.json'),
+            encoding="utf-8").read())
 
     def save(self):
-        f = open(join(self.dir, 'config.json'), 'w')
+        f = codecs.open(join(self.dir, 'config.json'), 'w', encoding="utf-8")
         f.write(json.dumps(self.to_dict(), indent=2))
         f.close()
 
@@ -52,18 +56,19 @@ class Build(object):
         self.reload()
 
     def output(self):
-        return open(join(self.dir, 'output.txt')).readlines()
+        return codecs.open(join(self.dir, 'output.txt'), encoding="utf-8").readlines()
 
     def write_output(self, lines):
-        f = open(join(self.dir, 'output.txt'), 'w')
+        f = codecs.open(join(self.dir, 'output.txt'), 'w', encoding="utf-8")
         f.writelines(lines)
         f.close()
 
     def reload(self):
-        self.json = json.loads(open(join(self.dir, 'build_info.json')).read())
+        self.json = json.loads(codecs.open(join(self.dir, 'build_info.json'),
+            encoding="utf-8").read())
 
     def save(self):
-        f = open(join(self.dir, 'build_info.json'), 'w')
+        f = codecs.open(join(self.dir, 'build_info.json'), 'w', encoding="utf-8")
         f.write(json.dumps(self.to_dict(), indent=2))
         f.close()
 

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from __future__ import unicode_literals
+
 import json
 
 
@@ -19,7 +21,7 @@ class LinesHandler(object):
         print '<tcp client %s:%s>' % address
         fileobj = sock.makefile()
         while True:
-            line = fileobj.readline()
+            line = fileobj.readline().decode("utf-8")
             if not line:
                 print '<tcp client disconnected>'
                 break
@@ -34,13 +36,13 @@ class LinesHandler(object):
                     'pid': pid,
                     'line': line
                 }
-                if 'END' in first_part:
+                if 'BEGIN' in first_part:
+                    self.outputs[pid] = []
+                elif 'END' in first_part:
                     import services
                     services.write_output(pid, self.outputs[pid])
                     del self.outputs[pid]
                     services.close_process(pid, line)
-                elif 'BEGIN' in first_part:
-                    self.outputs[msg['pid']] = []
             else:
                 msg = {
                     'type': 'line',
