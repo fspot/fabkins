@@ -87,7 +87,7 @@ Security
 
 The security of this application relies only on UNIX basic rights.
 Someone who can log in the webapp can do everything the user that launched the service can do.
-So you should use a separate user for this service, with restricted rights. Or, be the only one who knows the password.
+So you should use a separate user for this service, with restricted rights, be the only one who knows the password, use HTTPS, and be confident.
 
 Dependencies
 ------------
