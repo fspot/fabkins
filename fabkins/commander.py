@@ -73,7 +73,7 @@ def sender(outputs):
             break
         line = ' '.join(to_unicode(e) for e in out)
         line = line.rstrip("\n") + "\n" # be sure there's 1 trailing \n
-        print "::: to ze internets :", line,
+        print "::: to ze internets :", line.encode("utf-8"), # again utf-8 :)
         sk.sendall(line.encode("utf-8"))
     logging.info("<sender down!>")
 
