@@ -3,6 +3,8 @@ Fabkins
 
 Femto-jenkins based on fabfiles.
 
+![screenshot](https://i.imgur.com/pXTnw0s.png)
+
 Features
 --------
 
