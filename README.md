@@ -3,11 +3,6 @@ Fabkins
 
 Femto-jenkins based on fabfiles.
 
-<!-- ![screenshot_1](https://i.imgur.com/pXTnw0s.png) -->
-<!-- ![screenshot_2](https://i.imgur.com/qhKrviq.png) -->
-![screenshot_1](https://cdn.mediacru.sh/fA067KzkhArO.png)
-![screenshot_2](https://cdn.mediacru.sh/NgPEiBUjZtcM.png)
-
 Features
 --------
 
@@ -21,6 +16,13 @@ Features
 
 Screenshots
 -----------
+
+
+<!-- ![screenshot_1](https://i.imgur.com/pXTnw0s.png) -->
+<!-- ![screenshot_2](https://i.imgur.com/qhKrviq.png) -->
+![screenshot_1](https://cdn.mediacru.sh/fA067KzkhArO.png)
+![screenshot_2](https://cdn.mediacru.sh/NgPEiBUjZtcM.png)
+
 
 Installation
 ------------
