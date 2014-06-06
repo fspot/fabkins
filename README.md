@@ -28,9 +28,6 @@ Installation
 ------------
 
 You need a UNIX server with python >= 2.6.
-```bash
-$ sudo apt-get install libevent-dev  # necessary for gevent
-```
 
 Install it in a virtualenv, *please*.
 ```bash
