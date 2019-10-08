@@ -4,7 +4,7 @@ Jinja2==2.7.2
 MarkupSafe==0.18
 Werkzeug==0.9.4
 clize==2.4
-ecdsa==0.10
+ecdsa==0.13.3
 gevent==1.0
 gevent-websocket==0.9.1
 greenlet==0.4.2
