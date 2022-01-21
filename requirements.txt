@@ -9,7 +9,7 @@ gevent==1.0
 gevent-websocket==0.9.1
 greenlet==0.4.2
 ipdb==0.8
-ipython==1.1.0
+ipython==7.16.3
 itsdangerous==0.23
 paramiko==1.12.1
 path.py==5.0
