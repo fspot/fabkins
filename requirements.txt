@@ -11,6 +11,6 @@ greenlet==0.4.2
 ipdb==0.8
 ipython==1.1.0
 itsdangerous==0.23
-paramiko==1.12.1
+paramiko==2.10.1
 path.py==5.0
 pycrypto==2.6.1
